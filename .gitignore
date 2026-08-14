@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+contract/managed/
+contract/src/managed/
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# --- secrets -------------------------------------------------------------
+# Wallet seeds and keys must never reach the repository. Patterns without a
+# slash match at ANY depth, so `contract/.env` is covered by `.env`.
+.env
+.env.*
+!.env.example
+*seed*.txt
+*-sk-*.txt
+*.pem
+*.key
