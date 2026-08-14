@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push makes an in-flight run obsolete; the Compact toolchain install is
+# slow, so cancelling saves real minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────
+  # Contract: compile the Compact source, then run the test suite against
+  # the freshly generated output.
+  # ────────────────────────────────────────────────────────────────────
+  contract:
+    name: Compile & test contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Compact toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> "$GITHUB_PATH"
+
+      - name: Update compiler
+        run: compact update
+
+      # Fail loudly here rather than with a confusing error three steps later
+      # if the toolchain did not land on PATH.
+      - name: Verify compiler
+        run: compact --version
+
+      # Install once at the workspace ROOT. Running `npm install` inside a
+      # workspace child links binaries inconsistently — that is exactly how the
+      # local checkout ended up with an orphaned tsc shim that broke the build.
+      - name: Install dependencies
+        run: npm ci
+
+      # `contract/managed/` is generated and gitignored, and the tests import
+      # from it — so compiling first is required, not merely tidy.
+      - name: Compile contract
+        run: npm run compile
+
+      - name: Verify compiler output
+        run: |
+          test -d contract/managed/shadowvote/keys || { echo "::error::managed/ keys missing after compile"; exit 1; }
+          test -d contract/managed/shadowvote/zkir || { echo "::error::managed/ zkir missing after compile"; exit 1; }
+          ls -la contract/managed/shadowvote
+
+      - name: Run contract tests
+        run: npm test --workspace contract
+
+  # ────────────────────────────────────────────────────────────────────
+  # Frontend: type-check and build. Runs in parallel with `contract` —
+  # the compiled contract bindings it imports (frontend/src/generated) and
+  # the ZK assets (frontend/public/midnight) are committed, so it does not
+  # depend on the compile step above.
+  # ────────────────────────────────────────────────────────────────────
+  frontend:
+    name: Type-check & build frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Separate from the build so a type error is reported as a type error
+      # rather than as a generic build failure.
+      - name: Type-check
+        run: npm run lint --workspace frontend
+
+      # `tsc -b && vite build`
+      - name: Build
+        run: npm run build:frontend
+
+      - name: Verify build output
+        run: |
+          test -f frontend/dist/index.html || { echo "::error::no index.html in dist"; exit 1; }
+          test -d frontend/dist/midnight/shadowvote/keys || { echo "::error::ZK proving keys missing from dist — the dApp cannot prove without them"; exit 1; }
+          du -sh frontend/dist
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
