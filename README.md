@@ -6,8 +6,7 @@
 
 Privacy-first decentralized voting on the **Midnight** blockchain.
 
-<!-- Replace OWNER/REPO with your GitHub path once the repo is pushed. -->
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![CI](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml/badge.svg)](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml)
 
 </div>
 
