@@ -1,0 +1,28 @@
+[build]
+  # npm workspaces: build from the repo root so the frontend resolves hoisted
+  # dependencies (typescript and vite live in the root node_modules).
+  command = "npm run build:frontend"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: every path must serve index.html or a refresh on
+# /history or /election/3 returns 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ZK proving keys and circuit artifacts are content-addressed by the build,
+# so they can be cached hard.
+[[headers]]
+  for = "/midnight/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
