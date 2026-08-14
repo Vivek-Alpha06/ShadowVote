@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./node_modules/.tmp/tsnode",
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  // vite.config.ts imports the debug-log plugin, and a composite project must
+  // list every file it pulls in — omitting it fails `tsc -b` (TS6307) and so
+  // breaks the production build, even though the dev server is unaffected.
+  "include": ["vite.config.ts", "vite-plugin-debug-log.ts"]
+}
