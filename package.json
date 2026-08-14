@@ -1,0 +1,17 @@
+{
+  "name": "shadowvote",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ShadowVote — Vote Privately. Verify Publicly. Private ballot voting on Midnight.",
+  "workspaces": [
+    "contract",
+    "frontend"
+  ],
+  "scripts": {
+    "compile": "npm --workspace contract run compile",
+    "test": "npm --workspace contract run test --if-present",
+    "build:frontend": "npm --workspace frontend run build",
+    "dev": "npm --workspace frontend run dev"
+  },
+  "license": "MIT"
+}
