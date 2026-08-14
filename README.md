@@ -21,6 +21,7 @@ Privacy-first decentralized voting on the **Midnight** blockchain.
 <!-- TODO: paste the URL after deploying to Vercel or Netlify -->
 
 Live Demo: [vercel](https://shadow-vote-frontend-one.vercel.app/)
+Demo Video : [YouTube](https://youtu.be/F7ObiswjYpo)
 
 Locally: `npm run dev` → <http://localhost:5173>
 
