@@ -7,6 +7,9 @@
     "contract",
     "frontend"
   ],
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "compile": "npm --workspace contract run compile",
     "test": "npm --workspace contract run test --if-present",
