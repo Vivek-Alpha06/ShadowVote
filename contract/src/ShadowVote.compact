@@ -1,0 +1,150 @@
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+// ===========================================================================
+// ShadowVote — Vote Privately. Verify Publicly.
+//
+// A single contract managing many elections. Each election has public
+// metadata and public tallies, while WHO voted and WHICH candidate they chose
+// stay private:
+//
+//   * A voter appears on-chain only as a per-election nullifier
+//         hash("shadowvote:nul", electionId, secretKey)
+//     which is unlinkable to their wallet address.
+//   * castVote increments a public per-candidate tally, but the tally key is
+//     the candidate index only — it carries no link to the voter.
+//   * Double voting is prevented by the `voted` nullifier set.
+//
+// Design note: candidate *labels* (display names) are kept in the frontend /
+// off-chain metadata; on-chain the contract tracks candidates by index, which
+// is all that is needed to tally and prove results. This keeps the contract
+// compact and within Compact's fixed-shape ledger constraints.
+// ===========================================================================
+
+export enum Status {
+  OPEN,
+  CLOSED
+}
+
+// --- Public ledger ----------------------------------------------------------
+
+// Monotonic election id source. The value after increment is the new id.
+export ledger electionCount: Counter;
+
+// Per-election public metadata, keyed by election id (as Field).
+export ledger names:          Map<Field, Opaque<'string'>>;
+export ledger descriptions:   Map<Field, Opaque<'string'>>;
+export ledger candidateCounts: Map<Field, Uint<64>>;
+export ledger endTimes:       Map<Field, Uint<64>>;
+export ledger statuses:       Map<Field, Status>;
+export ledger organizers:     Map<Field, Bytes<32>>;
+export ledger totalVotes:     Map<Field, Uint<64>>;
+
+// Per-candidate tallies, keyed by hash(electionId, candidateIndex).
+export ledger tallies: Map<Bytes<32>, Uint<64>>;
+
+// Nullifiers of (election, voter) pairs that have already voted.
+export ledger voted: Set<Bytes<32>>;
+
+constructor() {
+  electionCount.increment(0);
+}
+
+// --- Private inputs ---------------------------------------------------------
+
+// Supplied off-chain by the wallet; never revealed on-chain.
+witness localSecretKey(): Bytes<32>;
+
+// --- Helpers ----------------------------------------------------------------
+
+// Organizer commitment (public identity of an election's creator).
+export circuit organizerKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "shadowvote:org:"), sk]);
+}
+
+// Per-election voter nullifier — unlinkable to the wallet address.
+export circuit nullifier(electionId: Field, sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>(
+    [pad(32, "shadowvote:nul:"), electionId as Bytes<32>, sk]
+  );
+}
+
+// Key for a candidate's tally within an election.
+export circuit tallyKey(electionId: Field, candidateIndex: Uint<64>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>(
+    [pad(32, "shadowvote:tal:"), electionId as Bytes<32>, candidateIndex as Field as Bytes<32>]
+  );
+}
+
+// --- Entry points -----------------------------------------------------------
+
+// Create an election. Returns the new election id.
+export circuit createElection(
+  name: Opaque<'string'>,
+  description: Opaque<'string'>,
+  candidateCount: Uint<64>,
+  endTime: Uint<64>
+): Field {
+  assert(candidateCount >= 2, "An election needs at least two candidates");
+
+  electionCount.increment(1);
+  const id = electionCount as Field;
+
+  names.insert(id, disclose(name));
+  descriptions.insert(id, disclose(description));
+  candidateCounts.insert(id, disclose(candidateCount));
+  endTimes.insert(id, disclose(endTime));
+  statuses.insert(id, Status.OPEN);
+  organizers.insert(id, disclose(organizerKey(localSecretKey())));
+  totalVotes.insert(id, 0);
+
+  return id;
+}
+
+// Cast a single private vote for `candidateIndex` in election `electionId`.
+export circuit castVote(electionId: Field, candidateIndex: Uint<64>): [] {
+  // electionId is a public identifier; candidateIndex determines which public
+  // tally bucket is incremented. Both must be disclosed to touch public ledger
+  // state. The voter's *identity* stays private — on-chain they appear only as
+  // the nullifier below, unlinkable to their wallet.
+  const eid = disclose(electionId);
+  const cidx = disclose(candidateIndex);
+
+  assert(statuses.member(eid), "Election does not exist");
+  assert(statuses.lookup(eid) == Status.OPEN, "Election is closed");
+  assert(cidx < candidateCounts.lookup(eid), "Invalid candidate");
+
+  const nul = disclose(nullifier(eid, localSecretKey()));
+  assert(!voted.member(nul), "This wallet has already voted in this election");
+  voted.insert(nul);
+
+  const key = tallyKey(eid, cidx);
+  const current = tallies.member(key) ? tallies.lookup(key) : 0;
+  tallies.insert(key, (current + 1) as Uint<64>);
+
+  totalVotes.insert(eid, (totalVotes.lookup(eid) + 1) as Uint<64>);
+}
+
+// Organizer-only: close the election so results are final.
+export circuit closeElection(electionId: Field): [] {
+  const eid = disclose(electionId);
+  assert(statuses.member(eid), "Election does not exist");
+  assert(statuses.lookup(eid) == Status.OPEN, "Election already closed");
+  assert(
+    organizers.lookup(eid) == organizerKey(localSecretKey()),
+    "Only the organizer can close this election"
+  );
+  statuses.insert(eid, Status.CLOSED);
+}
+
+// Public read: votes for a given candidate in an election.
+export circuit getCandidateVotes(electionId: Field, candidateIndex: Uint<64>): Uint<64> {
+  const key = tallyKey(disclose(electionId), disclose(candidateIndex));
+  return tallies.member(key) ? tallies.lookup(key) : 0;
+}
+
+// Public read: has the caller already voted in this election?
+export circuit hasVoted(electionId: Field): Boolean {
+  return voted.member(disclose(nullifier(electionId, localSecretKey())));
+}
