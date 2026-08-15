@@ -7,7 +7,7 @@
 
 ## What is the product, and who uses it?
 
-[I WILL FILL THIS IN]
+ShadowVote is a decentralized, privacy-preserving voting system built on Midnight, enabling secure and transparent elections while protecting voter anonymity. It is designed for organizations, universities, DAOs, and any group needing to conduct fair elections without compromising participant privacy.
 
 <!-- Prompt: name the product, what it does in one or two sentences, and who
      specifically uses it (e.g. university student unions, DAO members, club
@@ -29,7 +29,19 @@
 | [example] | Public ledger | Everyone |
 | [example] | Private witness | No one |
 
-[I WILL FILL IN THE ROWS]
+| Data Point | Type | Disclosed To |
+|------------|------|--------------|
+| Election details (ID, name, description, candidates) | Public ledger | Everyone |
+| Election status (open/closed) and timing | Public ledger | Everyone |
+| Aggregate results (tally per candidate) | Public ledger | Everyone |
+| Vote counts and turnout metrics | Public ledger | Everyone |
+| Organizer commitment hash | Public ledger | Everyone |
+| Voter eligibility list (e.g., token holders, addresses) | Public ledger | Everyone (pseudonymous) |
+| Voter nullifier (per election) | Public ledger | Everyone (unlinkable) |
+| Encrypted ballot data | Private input | Only recipient |
+| Wallet-to-ballot link | Never recorded | No one |
+| Private secret key and credentials | Private witness | No one |
+
 
 <!-- Prompt: the rows below reflect what ShadowVote.compact actually does today.
      Verify them against the contract, edit freely, and delete this comment.
