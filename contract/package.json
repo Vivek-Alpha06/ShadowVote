@@ -7,7 +7,7 @@
     "compile": "compact compile src/ShadowVote.compact managed/shadowvote",
     "test": "vitest run",
     "build": "npm run compile && tsc",
-    "deploy": "node --env-file=.env --loader ts-node/esm scripts/deploy.ts"
+    "deploy": "node --env-file=.env --loader ts-node/esm scripts/run-deploy.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "^2.5.1",

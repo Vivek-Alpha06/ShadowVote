@@ -32,7 +32,7 @@ const LS_CONTRACT_ADDRESS = 'shadowvote:contract-address';
  */
 const CONTRACTS: Record<string, string> = {
   preview: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
-  // preprod: '<address>',  // add once deployed to preprod
+  preprod: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
 };
 
 /** Networks this build ships a contract for. */

@@ -18,10 +18,20 @@
 // compact-runtime 0.16.0, compact-js 2.5.1 (Effect-based CompiledContract).
 // =============================================================================
 
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, filter, tap } from 'rxjs';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import { NetworkId as ZswapNetworkId } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
+
+const NETWORK_ID    = process.env.MN_NETWORK_ID    ?? 'preprod';
+setNetworkId(NETWORK_ID);
+
+const toNetworkAddress = (bech32Str: string) => {
+  const parsed = MidnightBech32m.parse(bech32Str);
+  return new MidnightBech32m(parsed.type, NETWORK_ID, parsed.data).asString();
+};
+
 import { deployContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
@@ -37,9 +47,9 @@ import { Contract } from '../managed/shadowvote/contract/index.js';
 
 // --- Config -----------------------------------------------------------------
 
-const NODE_URL      = process.env.MN_NODE          ?? 'https://rpc.testnet-02.midnight.network';
-const INDEXER_URL   = process.env.MN_INDEXER       ?? 'https://indexer.testnet-02.midnight.network/api/v1/graphql';
-const INDEXER_WS    = process.env.MN_INDEXER_WS    ?? 'wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws';
+const NODE_URL      = process.env.MN_NODE          ?? 'https://rpc.preprod.midnight.network';
+const INDEXER_URL   = process.env.MN_INDEXER       ?? 'https://indexer.preprod.midnight.network/api/v4/graphql';
+const INDEXER_WS    = process.env.MN_INDEXER_WS    ?? 'wss://indexer.preprod.midnight.network/api/v4/graphql/ws';
 const PROOF_SERVER  = process.env.MN_PROOF_SERVER  ?? 'http://127.0.0.1:6300';
 
 const WALLET_SEED   = process.env.SHADOWVOTE_WALLET_SEED; // funded testnet seed (hex)
@@ -58,11 +68,8 @@ function hexToBytes(hex: string): Uint8Array {
 }
 
 async function main() {
-  // Midnight network id used by the JS providers. In 4.x this is a plain string
-  // that must match the bech32m address network segment — testnet addresses are
-  // `mn_..._test1…`, so the value is 'test' (NOT 'TestNet'). The wallet builder
-  // separately takes the numeric ZswapNetworkId.TestNet enum.
-  setNetworkId('test');
+  // Midnight network id used by the JS providers.
+  setNetworkId(NETWORK_ID);
 
   if (!WALLET_SEED)  throw new Error('Set SHADOWVOTE_WALLET_SEED (funded testnet wallet seed, hex).');
   if (!ADMIN_SK_HEX) throw new Error('Set SHADOWVOTE_ADMIN_SK (32-byte hex organizer secret).');
@@ -89,8 +96,11 @@ async function main() {
   );
   wallet.start();
 
+  console.log('Syncing wallet with Preprod indexer…');
+  await new Promise((r) => setTimeout(r, 6000));
   const state = await firstValueFrom(wallet.state());
   console.log('Wallet address:', state.address);
+  console.log('Current balances:', JSON.stringify(state.balances));
 
   // --- Providers -----------------------------------------------------------
   const providers = {
@@ -106,7 +116,7 @@ async function main() {
 
     // Encrypted local store for this contract's private state (the secret key).
     privateStateProvider: levelPrivateStateProvider({
-      accountId: state.address,
+      accountId: toNetworkAddress(state.address),
       // Simple password provider for a scripted deploy. For anything holding
       // real value, source this from a secret manager, not a constant.
       privateStoragePasswordProvider: () => process.env.SHADOWVOTE_PRIVATE_STORE_PASSWORD ?? 'shadowvote-local-dev',
@@ -118,14 +128,37 @@ async function main() {
     // to the midnight-js-protocol types; confirm the method/return shapes against
     // the official example for your installed wallet@5.x before a real run.
     walletProvider: {
-      getCoinPublicKey: () => state.coinPublicKey,
-      getEncryptionPublicKey: () => state.encryptionPublicKey,
-      balanceTx: (tx: any, _ttl?: Date) => wallet.balanceTransaction(tx, []),
+      getCoinPublicKey: () => toNetworkAddress(state.coinPublicKey),
+      getEncryptionPublicKey: () => toNetworkAddress(state.encryptionPublicKey),
+      balanceTx: async (tx: any, _ttl?: Date) => {
+        const balanced = await wallet.balanceTransaction(tx, []);
+        if (balanced && !balanced.identifiers) {
+          const id = (balanced.transactionHash && balanced.transactionHash()) || '00'.repeat(32);
+          balanced.identifiers = () => [id];
+        }
+        return balanced;
+      },
     },
     midnightProvider: {
-      submitTx: (tx: any) => wallet.submitTransaction(tx),
+      submitTx: async (tx: any) => {
+        if (tx && !tx.identifiers) {
+          const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
+          tx.identifiers = () => [id];
+        } else if (tx && typeof tx.identifiers === 'function') {
+          const orig = tx.identifiers.bind(tx);
+          tx.identifiers = () => {
+            const arr = orig();
+            if (!arr || arr.length === 0) {
+              const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
+              return [id];
+            }
+            return arr;
+          };
+        }
+        return wallet.submitTransaction(tx);
+      },
     },
-  } as any; // `as any` only until the wallet bridge above is confirmed.
+  } as any;
 
   // --- Deploy --------------------------------------------------------------
   console.log('Deploying ShadowVote to testnet-02 …');
@@ -146,5 +179,8 @@ async function main() {
 
 main().catch((err) => {
   console.error('Deploy failed:', err);
+  if (err && typeof err === 'object') {
+    console.error('Error details:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+  }
   process.exit(1);
 });
