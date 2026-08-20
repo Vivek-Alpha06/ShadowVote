@@ -5,15 +5,14 @@
 > Tagline: Vote Privately. Verify Publicly. Privacy-preserving decentralized elections on the Midnight blockchain.
 
 ## Live Demo & Links
-- **Live Demo (Preprod / Preview):** [https://shadow-vote-frontend-one.vercel.app/](https://shadow-vote-frontend-one.vercel.app/)
+- **Live Preprod Demo:** [https://shadow-vote-frontend-one.vercel.app/](https://shadow-vote-frontend-one.vercel.app/)
 - **Demo Video (MVP Walkthrough):** [https://youtu.be/F7ObiswjYpo](https://youtu.be/F7ObiswjYpo)
 - **Product X (Twitter) Profile:** [https://x.com/ShadowVote_ZK](https://x.com/ShadowVote_ZK)
 
-## Contract Address
-| Network | Contract Address |
-|---|---|
-| **Midnight Preprod** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` |
-| **Midnight Preview** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` |
+## Contract Address & On-Chain Verification
+- **Network:** Midnight Preprod
+- **Contract Address:** [`8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`](https://explorer.preview.midnight.network/contracts/stream/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d)
+- **Explorer Verification:** [Verify Contract on Midnight Explorer](https://explorer.preview.midnight.network/contracts/stream/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d)
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
@@ -39,19 +38,13 @@ The problem it solves: on ordinary public blockchains, every vote is readable fo
   - *"I am eligible, I have not already voted in this election, and my vote is for a valid candidate"* — without revealing who they are or who they voted for.
 
 ## Tech Stack
-- **Blockchain:** Midnight (Preprod/Preview networks)
+- **Blockchain:** Midnight Preprod
 - **Contract Language:** Compact `0.23` (compiler `0.31.1`)
 - **Runtime:** Node.js 22+, Docker (proof server)
 - **SDK:** `@midnight-ntwrk/midnight-js` 4.1.1, `compact-runtime` 0.16.0, `ledger-v8`
 - **Wallet:** Lace (Midnight-enabled), via the DApp connector API v4
 - **Frontend:** React 18, Vite 5, TypeScript, TailwindCSS, Framer Motion
 - **Tests:** Vitest, driving the compiled contract through the compact-runtime simulator
-
-## Contract Address
-| Network | Contract Address |
-|---|---|
-| **Midnight Preprod** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` |
-| **Midnight Preview** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` |
 
 ## Prerequisites
 - **Lace wallet:** Midnight-enabled browser extension, set to the target network (Preprod or Preview).
