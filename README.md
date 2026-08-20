@@ -9,10 +9,9 @@
 - **Demo Video (MVP Walkthrough):** [https://youtu.be/F7ObiswjYpo](https://youtu.be/F7ObiswjYpo)
 - **Product X (Twitter) Profile:** [https://x.com/ShadowVote_ZK](https://x.com/ShadowVote_ZK)
 
-## Contract Address & On-Chain Verification
+## Contract Address
 - **Network:** Midnight Preprod
-- **Contract Address:** [`8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`](https://explorer.preview.midnight.network/contracts/stream/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d)
-- **Explorer Verification:** [Verify Contract on Midnight Explorer](https://explorer.preview.midnight.network/contracts/stream/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d)
+- **Contract Address:** `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
