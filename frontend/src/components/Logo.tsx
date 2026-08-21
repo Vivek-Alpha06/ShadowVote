@@ -9,8 +9,6 @@
 // without a second asset, and adds no network request.
 // ===========================================================================
 
-let uid = 0;
-
 /**
  * The mark on its own — square, safe to use as an app icon or avatar.
  *
@@ -26,73 +24,94 @@ export function LogoMark({
   boxed?: boolean;
   className?: string;
 }) {
-  // Gradient ids must be unique per instance — two SVGs sharing an id makes the
-  // second one silently adopt the first's gradient.
-  const id = `sv-${(uid += 1)}`;
-
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      fill="none"
-      className={className}
-      role="img"
-      aria-label="ShadowVote"
-    >
-      <defs>
-        <linearGradient id={`${id}-stroke`} x1="10" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#a855f7" />
-          <stop offset="0.55" stopColor="#8b5cf6" />
-          <stop offset="1" stopColor="#22d3ee" />
-        </linearGradient>
-        <linearGradient id={`${id}-plate`} x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#8b5cf6" stopOpacity="0.28" />
-          <stop offset="1" stopColor="#3b82f6" stopOpacity="0.16" />
-        </linearGradient>
-      </defs>
+    <div className={`relative inline-flex items-center justify-center group ${className}`}>
+      {/* 3D Ambient Backdrop Glow */}
+      <div className="absolute inset-0 rounded-xl bg-white/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {boxed && (
-        <>
-          <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="13" fill={`url(#${id}-plate)`} />
-          <rect
-            x="0.75"
-            y="0.75"
-            width="46.5"
-            height="46.5"
-            rx="13"
-            stroke="#8b5cf6"
-            strokeOpacity="0.35"
-            strokeWidth="1.5"
-          />
-        </>
-      )}
-
-      <g
-        stroke={`url(#${id}-stroke)`}
-        strokeWidth="3.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 48 48"
+        fill="none"
+        className="relative transform transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1"
+        role="img"
+        aria-label="ShadowVote"
       >
-        {/* S — an open curve, left of centre */}
-        <path d="M25.5 15.5c0-3.4-9.5-3.9-9.5 0.6 0 4.4 9.4 3 9.4 7.6 0 4.6-9.4 4.2-9.4 0.6" />
-        {/* V — reads as a check mark, the ballot cue */}
-        <path d="M23 27.5 L28.5 38 L34 27.5" />
-      </g>
+        <defs>
+          {/* 3D Metallic Surface Gradients */}
+          <linearGradient id="shield-metal-3d" x1="12" y1="10" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#2c2d35" />
+            <stop offset="45%" stopColor="#14151b" />
+            <stop offset="70%" stopColor="#0a0a0d" />
+            <stop offset="100%" stopColor="#1c1d24" />
+          </linearGradient>
 
-      {/* The dot turns the V into a completed tick and balances the mark. */}
-      <circle cx="34" cy="14.5" r="2.6" fill="#22d3ee" />
-    </svg>
+          <linearGradient id="shield-bevel-3d" x1="12" y1="10" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="35%" stopColor="#71717a" stopOpacity="0.6" />
+            <stop offset="75%" stopColor="#27272a" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.7" />
+          </linearGradient>
+
+          <linearGradient id="tick-3d" x1="19" y1="20" x2="29" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#d4d4d8" />
+          </linearGradient>
+
+          {/* 3D Drop Shadows */}
+          <filter id="logo-depth-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#000000" floodOpacity="0.9" />
+            <feDropShadow dx="0" dy="1" stdDeviation="1" floodColor="#ffffff" floodOpacity="0.2" />
+          </filter>
+        </defs>
+
+        {boxed && (
+          <>
+            {/* Boxed plate with 3D depth border */}
+            <rect x="1" y="1" width="46" height="46" rx="12" fill="#0c0d12" stroke="#27272a" strokeWidth="1.5" />
+            <rect x="2" y="2" width="44" height="44" rx="11" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+          </>
+        )}
+
+        {/* 3D Geometric Shield with Metallic Bevel */}
+        <g filter="url(#logo-depth-shadow)">
+          <path
+            d="M24 10L36 15.5V25C36 32.5 24 38 24 38C24 38 12 32.5 12 25V15.5L24 10Z"
+            fill="url(#shield-metal-3d)"
+            stroke="url(#shield-bevel-3d)"
+            strokeWidth="1.75"
+            strokeLinejoin="round"
+          />
+
+          {/* 3D Inner Facet Light Crease */}
+          <path
+            d="M24 10V38"
+            stroke="rgba(255, 255, 255, 0.15)"
+            strokeWidth="1"
+          />
+
+          {/* 3D Crisp Embossed Ballot Checkmark */}
+          <path
+            d="M19 24.5L22.5 28L29 20"
+            stroke="url(#tick-3d)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </svg>
+    </div>
   );
 }
 
 /** Mark plus wordmark, for the navbar and any header use. */
 export default function Logo({ size = 36 }: { size?: number }) {
   return (
-    <span className="flex items-center gap-2.5">
+    <span className="flex items-center gap-2.5 group cursor-pointer">
       <LogoMark size={size} />
-      <span className="text-lg font-extrabold tracking-tight">
-        Shadow<span className="gradient-text">Vote</span>
+      <span className="text-base font-bold tracking-tight text-white flex items-center gap-0.5 font-sans transition-colors group-hover:text-zinc-200">
+        Shadow<span className="text-zinc-400 group-hover:text-zinc-300">Vote</span>
       </span>
     </span>
   );
