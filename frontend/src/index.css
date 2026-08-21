@@ -13,41 +13,50 @@ body,
 }
 
 body {
-  @apply bg-midnight-950 text-slate-200 font-sans antialiased;
+  @apply bg-[#000000] text-[#ededed] font-sans antialiased;
   background-image:
-    radial-gradient(60rem 60rem at 80% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
-    radial-gradient(50rem 50rem at 0% 20%, rgba(59, 130, 246, 0.10), transparent 55%);
+    radial-gradient(40rem 30rem at 50% -5%, rgba(255, 255, 255, 0.08), transparent 70%),
+    radial-gradient(30rem 30rem at 50% 100%, rgba(255, 255, 255, 0.03), transparent 70%);
   background-attachment: fixed;
 }
 
 @layer components {
   .glass {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl;
+    @apply bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/[0.08] rounded-xl shadow-2xl;
+  }
+  .glass-card {
+    @apply relative overflow-hidden bg-[#09090b] border border-zinc-800/80 rounded-xl transition-all duration-300;
   }
   .glass-hover {
-    @apply transition-all duration-300 hover:border-shadow-purple/40 hover:bg-white/[0.05] hover:shadow-glow;
+    @apply transition-all duration-300 hover:border-zinc-500 hover:bg-[#121215] hover:shadow-2xl hover:-translate-y-0.5;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-semibold
-           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium text-sm
+           transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-gradient-to-r from-shadow-purple to-shadow-blue text-white
-           hover:shadow-glow hover:-translate-y-0.5;
+    @apply btn bg-white text-black font-semibold border border-white hover:bg-zinc-200 hover:border-zinc-200 active:scale-[0.98] shadow-sm;
   }
   .btn-ghost {
-    @apply btn border border-white/15 text-slate-200 hover:bg-white/5 hover:border-white/30;
+    @apply btn border border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:bg-zinc-800/80 hover:text-white hover:border-zinc-700;
   }
   .input {
-    @apply w-full rounded-xl bg-midnight-800/70 border border-white/10 px-4 py-3 text-slate-100
-           placeholder:text-slate-500 outline-none transition-all
-           focus:border-shadow-purple/60 focus:ring-2 focus:ring-shadow-purple/20;
+    @apply w-full rounded-lg bg-[#0c0c0e] border border-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100
+           placeholder:text-zinc-500 outline-none transition-all
+           focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400/50;
   }
   .label {
-    @apply block text-sm font-medium text-slate-300 mb-1.5;
+    @apply block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5;
   }
   .gradient-text {
-    @apply bg-gradient-to-r from-shadow-violet via-shadow-purple to-shadow-blue bg-clip-text text-transparent;
+    @apply bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent;
+  }
+  .tech-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border border-zinc-800 bg-zinc-900/80 text-zinc-300;
+  }
+  .grid-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 
