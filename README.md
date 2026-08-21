@@ -7,7 +7,7 @@
 ## Live Demo & Links
 - **Live Preprod Demo:** [https://shadow-vote-frontend-one.vercel.app/](https://shadow-vote-frontend-one.vercel.app/)
 - **Demo Video (MVP Walkthrough):** [https://youtu.be/F7ObiswjYpo](https://youtu.be/F7ObiswjYpo)
-- **Product X (Twitter) Profile:** [https://x.com/ShadowVote_ZK](https://x.com/ShadowVote_ZK)
+- **Product X (Twitter) Profile:** [https://x.com/shadow_vote](https://x.com/shadow_vote)
 
 ## Contract Address
 - **Network:** Midnight Preprod
