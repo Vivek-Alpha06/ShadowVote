@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
@@ -17,18 +17,66 @@ const UNIT_MS: Record<Unit, number> = {
   days: 86_400_000,
 };
 
+/**
+ * Draft persistence.
+ *
+ *   "Cannot edit or delete an election draft before deploying on-chain. If I
+ *    made a typo in candidate names, I had to re-enter all fields from
+ *    scratch."  -- Barnali Das, 2 stars
+ *
+ * Kept in localStorage, in this browser only: a draft is not yet an election
+ * and has no business touching the chain or any server. It is cleared the
+ * moment the election is actually created.
+ */
+const DRAFT_KEY = 'shadowvote:create:draft';
+
+interface Draft {
+  name: string;
+  category: ElectionCategory;
+  description: string;
+  candidates: string[];
+  duration: number;
+  unit: Unit;
+}
+
+function loadDraft(): Partial<Draft> {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Partial<Draft>) : {};
+  } catch {
+    // A corrupt or unavailable store must never block the form.
+    return {};
+  }
+}
+
 export default function CreateElection() {
   const navigate = useNavigate();
   const { address, connected } = useWallet();
   const toast = useToast();
 
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState<ElectionCategory>('election');
-  const [description, setDescription] = useState('');
-  const [candidates, setCandidates] = useState<string[]>(['', '']);
-  const [duration, setDuration] = useState(24);
-  const [unit, setUnit] = useState<Unit>('hours');
+  const [draft] = useState(loadDraft);
+  const [name, setName] = useState(draft.name ?? '');
+  const [category, setCategory] = useState<ElectionCategory>(draft.category ?? 'election');
+  const [description, setDescription] = useState(draft.description ?? '');
+  const [candidates, setCandidates] = useState<string[]>(
+    draft.candidates?.length ? draft.candidates : ['', ''],
+  );
+  const [duration, setDuration] = useState(draft.duration ?? 24);
+  const [unit, setUnit] = useState<Unit>(draft.unit ?? 'hours');
   const [submitting, setSubmitting] = useState(false);
+
+  // Save on every edit so a failed transaction, a reload, or a closed tab all
+  // leave the work intact.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ name, category, description, candidates, duration, unit }),
+      );
+    } catch {
+      /* private mode or a full quota — not worth interrupting the user over */
+    }
+  }, [name, category, description, candidates, duration, unit]);
 
   const setCandidate = (i: number, v: string) =>
     setCandidates((c) => c.map((x, idx) => (idx === i ? v : x)));
@@ -38,8 +86,47 @@ export default function CreateElection() {
 
   const validCandidates = candidates.map((c) => c.trim()).filter(Boolean);
   const durationMs = duration * UNIT_MS[unit];
-  const canSubmit =
-    connected && name.trim().length > 2 && validCandidates.length >= 2 && durationMs > 0;
+
+  /**
+   * Inline validation, added after user feedback:
+   *
+   *   "Form validation in election creation is missing checks — if you
+   *    accidentally leave a candidate name blank, the deployment transaction
+   *    fails on-chain and wastes gas."  -- Swati Maji, 2 stars
+   *
+   * The old behaviour was arguably worse than reported: a blank row was
+   * silently dropped by `.filter(Boolean)`, so the election deployed with
+   * fewer candidates than the organizer intended and nothing said so. Every
+   * problem is now named, next to the field that causes it, BEFORE a
+   * transaction is built — nothing here costs gas to discover.
+   */
+  const trimmed = candidates.map((c) => c.trim());
+  const blankRows = trimmed
+    .map((c, i) => (c ? -1 : i))
+    .filter((i) => i >= 0);
+  const duplicateRows = trimmed
+    .map((c, i) =>
+      c && trimmed.findIndex((o) => o.toLowerCase() === c.toLowerCase()) !== i ? i : -1,
+    )
+    .filter((i) => i >= 0);
+
+  const errors: string[] = [];
+  if (name.trim().length > 0 && name.trim().length <= 2)
+    errors.push('The election name needs at least 3 characters.');
+  if (blankRows.length > 0)
+    errors.push(
+      blankRows.length === 1
+        ? `Candidate ${blankRows[0] + 1} is empty. Fill it in or remove the row.`
+        : `Candidates ${blankRows.map((i) => i + 1).join(', ')} are empty. Fill them in or remove those rows.`,
+    );
+  if (duplicateRows.length > 0)
+    errors.push(
+      'Two candidates have the same name. Voters pick by name, so each one must be distinct.',
+    );
+  if (validCandidates.length < 2) errors.push('An election needs at least two candidates.');
+  if (!(durationMs > 0)) errors.push('The voting window must be longer than zero.');
+
+  const canSubmit = connected && name.trim().length > 2 && errors.length === 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,6 +143,12 @@ export default function CreateElection() {
         },
         address,
       );
+      // The draft has become a real election; keep no stale copy of it.
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* nothing to clean up if the store is unavailable */
+      }
       toast.success('Election created — voting is open');
       navigate(`/election/${election.id}`);
     } catch (err) {
@@ -148,26 +241,47 @@ export default function CreateElection() {
         <div>
           <label className="label">Candidates</label>
           <div className="space-y-2">
-            {candidates.map((c, i) => (
-              <div key={i} className="flex gap-2">
-                <input
-                  className="input"
-                  placeholder={`Candidate ${i + 1}`}
-                  value={c}
-                  onChange={(e) => setCandidate(i, e.target.value)}
-                  maxLength={60}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeCandidate(i)}
-                  disabled={candidates.length <= 2}
-                  className="btn-ghost px-3 disabled:opacity-30"
-                  title="Remove"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+            {candidates.map((c, i) => {
+              const isBlank = blankRows.includes(i);
+              const isDuplicate = duplicateRows.includes(i);
+              const bad = isBlank || isDuplicate;
+              return (
+                <div key={i}>
+                  <div className="flex gap-2">
+                    <input
+                      className={`input ${bad ? 'border-rose-400/60 focus:border-rose-400' : ''}`}
+                      placeholder={`Candidate ${i + 1}`}
+                      value={c}
+                      onChange={(e) => setCandidate(i, e.target.value)}
+                      maxLength={60}
+                      aria-invalid={bad}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeCandidate(i)}
+                      disabled={candidates.length <= 2}
+                      className="btn-ghost px-3 disabled:opacity-30"
+                      title="Remove"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {/* Named at the field, not just in a summary — a blank row
+                      used to be silently dropped and deploy with one fewer
+                      candidate than intended. */}
+                  {isBlank && (
+                    <p className="mt-1 text-xs text-rose-300">
+                      This candidate is empty. Fill it in, or remove the row.
+                    </p>
+                  )}
+                  {isDuplicate && (
+                    <p className="mt-1 text-xs text-rose-300">
+                      Same name as an earlier candidate — each one must be distinct.
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <button
             type="button"
@@ -211,9 +325,29 @@ export default function CreateElection() {
           </p>
         </div>
 
+        {/* Everything wrong with the form, before a transaction is built.
+            Discovering these on-chain cost testers real gas. */}
+        {errors.length > 0 && name.trim().length > 0 && (
+          <div className="rounded-xl border border-rose-400/20 bg-rose-400/5 p-3">
+            <p className="text-xs font-semibold text-rose-200">
+              Fix these before creating — none of it costs gas to correct here:
+            </p>
+            <ul className="mt-1.5 list-inside list-disc space-y-0.5 text-xs text-rose-300">
+              {errors.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <button type="submit" disabled={!canSubmit || submitting} className="btn-primary w-full">
           {submitting ? 'Creating…' : 'Create Election'}
         </button>
+
+        <p className="text-center text-xs text-slate-500">
+          Your draft is kept in this browser until the election is created, so a failed transaction
+          never makes you retype it.
+        </p>
       </motion.form>
     </div>
   );
