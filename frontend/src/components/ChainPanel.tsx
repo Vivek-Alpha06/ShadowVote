@@ -119,9 +119,7 @@ export default function ChainPanel() {
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-shadow-purple border-t-transparent" />
             <div>
               <p className="font-semibold text-slate-200">{step ?? 'Working…'}</p>
-              <p className="text-xs text-slate-500">
-                Approve the transaction in your wallet. Proving can take a minute.
-              </p>
+              <p className="text-xs text-slate-500">{busySubtitle(step)}</p>
             </div>
           </div>
           <ActivityLog />
@@ -235,4 +233,41 @@ function ActivityLog() {
       </div>
     </div>
   );
+}
+
+/**
+ * Explain what the current step actually costs.
+ *
+ * This line used to be the constant "Approve the transaction in your wallet.
+ * Proving can take a minute." shown for EVERY busy state — including joining,
+ * which is `findDeployedContract`: no transaction, no signature, no fee. So a
+ * first-time visitor was told to approve a prompt that never appeared, and led
+ * to believe that simply opening the app would cost them money.
+ *
+ * That is the same class of error testers reported elsewhere as "the screen is
+ * frozen": a status line that does not track reality is worse than none, since
+ * the user waits for something that is not coming.
+ */
+function busySubtitle(step: string | null): string {
+  const s = (step ?? '').toLowerCase();
+
+  if (s.startsWith('joining contract')) {
+    return 'Reading the contract from the chain. This is free — no signature, no fee.';
+  }
+  if (s.includes('permission')) {
+    return 'Your wallet may ask to grant permissions. This grants access only; nothing is submitted.';
+  }
+  if (s.includes('approve in your wallet') || s.includes('balancing')) {
+    return 'Approve the transaction in your wallet. Proving can take a minute.';
+  }
+  if (s.includes('submitting') || s.includes('finalization')) {
+    return 'Submitted. Waiting for the network to include it in a block.';
+  }
+  if (s.includes('dust')) {
+    return 'Checking you can cover the fee before anything is proved or signed.';
+  }
+  if (s.includes('private state')) {
+    return 'Loading your local voter key. It never leaves this browser.';
+  }
+  return 'Setting up — nothing is submitted to the chain yet.';
 }
