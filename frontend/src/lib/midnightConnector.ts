@@ -32,11 +32,13 @@
  * almost never on it.
  */
 export const NETWORK_IDS = [
-  // preview first: that is where this project's funded wallet lives
-  // (faucet.preview.midnight.network), and the first attempt must be a
-  // plausible one — a rejected id kills the wallet's message channel.
-  'preview',
+  // preprod first: that is where ShadowVote is deployed and where every
+  // verified user wallet lives (all 80 are mn_addr_preprod1…). The first
+  // attempt must be the right one — a rejected id kills the wallet's message
+  // channel, and connecting successfully on a network with no contract is
+  // worse than failing, because the app then looks empty with no error.
   'preprod',
+  'preview',
   'undeployed',
   'mainnet',
   // Accepted by some builds but rejected by others; kept last so a default

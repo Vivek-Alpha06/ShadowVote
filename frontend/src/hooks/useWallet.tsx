@@ -37,6 +37,7 @@ import {
   type DiscoveredWallet,
   type WalletHandle,
 } from '../lib/midnightConnector';
+import { supportedNetworks } from '../lib/chainSession';
 
 export { NETWORK_LABELS };
 
@@ -130,7 +131,18 @@ function sameDiagnostics(a: WalletDiagnostics, b: WalletDiagnostics): boolean {
  * attempt. We ask once and let the wallet tell us its valid ids on failure.
  */
 function chosenNetwork(forced?: string): string {
-  return forced ?? localStorage.getItem(LS_NETWORK) ?? NETWORK_IDS[0];
+  if (forced) return forced;
+
+  // A network remembered by an older build can be one this build ships no
+  // contract for — most of all `preview`, which used to be the default. That
+  // case does not fail loudly: the wallet connects fine and the app then shows
+  // an empty election list with no error, which reads as "the product is
+  // broken". Ignore a remembered network we cannot actually serve.
+  const remembered = localStorage.getItem(LS_NETWORK);
+  if (remembered && supportedNetworks().includes(remembered)) return remembered;
+  if (remembered) localStorage.removeItem(LS_NETWORK);
+
+  return NETWORK_IDS[0];
 }
 
 export function WalletProvider({ children }: { children: ReactNode }) {

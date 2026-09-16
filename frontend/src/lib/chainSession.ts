@@ -31,7 +31,13 @@ const LS_CONTRACT_ADDRESS = 'shadowvote:contract-address';
  * anything worked. See `contractForNetwork` for why this is a map.
  */
 const CONTRACTS: Record<string, string> = {
-  preview: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
+  // Preprod only. This address was previously listed under `preview` as well,
+  // which was wrong and failed SILENTLY: a contract exists only on the network
+  // it was deployed to, so a Preview wallet would connect, "join" an address
+  // that does not exist there, and show an empty election list with no error.
+  // Every verified user wallet is mn_addr_preprod1…, which is the evidence
+  // this deployment is on preprod. Add a network here only after deploying to
+  // it and confirming the address on that network's explorer.
   preprod: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
 };
 
