@@ -21,14 +21,6 @@ A single contract manages many elections. Anyone with a wallet can create one (n
 
 The problem it solves: on an ordinary public blockchain a secret ballot is impossible. Every transaction is readable forever, so wallet history reveals political preference and coercion becomes trivial. Universities, DAOs, clubs, and unions need secret ballots, which a transparent ledger cannot provide on its own. Midnight's separation of public ledger state from private witnesses is what makes it possible to prove a ballot is valid and unique **without** revealing the ballot.
 
-### 🗳️ Core Voting Mechanics
-
-- **Secret Ballot, Public Tally:** Per-candidate counts, turnout, deadlines and status are public ledger state anyone can read on the explorer. Which candidate a given wallet chose is a private circuit input that never touches the chain.
-- **Nullifier-Based Double-Vote Prevention:** Each voter appears on-chain only as `hash("shadowvote:nul", electionId, secretKey)` — identical if they vote twice in the *same* election (so the second attempt is rejected by the contract), completely different in every *other* election (so ballots cannot be linked across votes, and no nullifier walks back to a wallet).
-- **Sealed Results Until Close:** Per-candidate tallies stay hidden while voting is open, because a live running count pressures late voters and, in a small election, can expose them by comparing readings. Only the organizer's wallet can close an election, and closing is what publishes the result.
-- **Browser-Side Proving:** The zero-knowledge proof is generated on the voter's own machine. The voter secret comes from the `localSecretKey()` witness and never leaves the prover.
-- **Free, Wallet-less Reads:** Every election, tally and result is readable with no wallet, no tokens and no signature — so anyone can audit an election without participating in it.
-
 ---
 
 ## 🌐 Project Deliverables & Key Links
@@ -50,6 +42,16 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 | 📜 **Product Proposal** | [PROPOSAL.md](./PROPOSAL.md) | Product thesis, data model, and the known gaps stated plainly |
 | ⚙️ **CI/CD Pipeline** | [View live workflow runs](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml) | Two-job GitHub Actions pipeline on every push — contract (Compact compile, ZK asset verification, 6 Vitest specs) and frontend (type-check + Vite build) |
 | 🧾 **Contract Source** | [`ShadowVote.compact`](./contract/src/ShadowVote.compact) | 8 exported circuits, 10 public ledger fields, 1 private witness |
+
+---
+
+## 🗳️ Core Voting Mechanics
+
+- **Secret Ballot, Public Tally:** Per-candidate counts, turnout, deadlines and status are public ledger state anyone can read on the explorer. Which candidate a given wallet chose is a private circuit input that never touches the chain.
+- **Nullifier-Based Double-Vote Prevention:** Each voter appears on-chain only as `hash("shadowvote:nul", electionId, secretKey)` — identical if they vote twice in the *same* election (so the second attempt is rejected by the contract), completely different in every *other* election (so ballots cannot be linked across votes, and no nullifier walks back to a wallet).
+- **Sealed Results Until Close:** Per-candidate tallies stay hidden while voting is open, because a live running count pressures late voters and, in a small election, can expose them by comparing readings. Only the organizer's wallet can close an election, and closing is what publishes the result.
+- **Browser-Side Proving:** The zero-knowledge proof is generated on the voter's own machine. The voter secret comes from the `localSecretKey()` witness and never leaves the prover.
+- **Free, Wallet-less Reads:** Every election, tally and result is readable with no wallet, no tokens and no signature — so anyone can audit an election without participating in it.
 
 ---
 
