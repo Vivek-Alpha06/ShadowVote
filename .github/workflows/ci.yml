@@ -13,6 +13,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # The Compact toolchain this contract is built against. Kept here so the
+  # pin is visible in one place rather than buried in a step, and so bumping
+  # it is a deliberate one-line change reviewed alongside the pragma in
+  # contract/src/ShadowVote.compact.
+  COMPACT_VERSION: '0.31.1'
+
 jobs:
   # ────────────────────────────────────────────────────────────────────
   # Contract: compile the Compact source, then run the test suite against
@@ -35,13 +42,29 @@ jobs:
             https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
           echo "$HOME/.compact/bin" >> "$GITHUB_PATH"
 
-      - name: Update compiler
-        run: compact update
+      # PINNED — do not change to a bare `compact update`.
+      #
+      # A bare update installs whatever is newest, and the toolchain's LANGUAGE
+      # version moves with it. ShadowVote.compact declares
+      # `pragma language_version 0.23`, so the day the latest toolchain moved to
+      # language 0.26.0 every build started failing with
+      #     Exception: ShadowVote.compact line 1 char 1:
+      #       language version 0.26.0 mismatch
+      # on a commit that changed no contract code at all.
+      #
+      # 0.31.1 is the version this contract is developed and tested against, and
+      # the one the README documents. Bump it only together with the pragma.
+      - name: Install pinned compiler
+        run: compact update ${{ env.COMPACT_VERSION }}
 
       # Fail loudly here rather than with a confusing error three steps later
-      # if the toolchain did not land on PATH.
+      # if the toolchain did not land on PATH. `compact --version` reports the
+      # CLI, not the compiler, so print the toolchain list too — the active
+      # version is the one marked with an arrow.
       - name: Verify compiler
-        run: compact --version
+        run: |
+          compact --version
+          compact list
 
       # Install once at the workspace ROOT. Running `npm install` inside a
       # workspace child links binaries inconsistently — that is exactly how the
