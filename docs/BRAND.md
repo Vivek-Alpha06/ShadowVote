@@ -147,9 +147,10 @@ it should look like a voting commission, not a dark-web forum.
 
 | Asset | Status | Location |
 |---|---|---|
-| Logo mark (SVG, monochrome) | shipped in-app | [`frontend/src/components/Logo.tsx`](../frontend/src/components/Logo.tsx) |
+| In-app logo component | shipped | [`frontend/src/components/Logo.tsx`](../frontend/src/components/Logo.tsx) |
 | App favicon | shipped | [`frontend/public/favicon.svg`](../frontend/public/favicon.svg) |
-| X avatar (400 × 400) | to create | — |
-| X banner (1500 × 500) | to create, per concept above | — |
+| Primary mark / X avatar | shipped | [`logo/shadowvote_logo.png`](../logo/shadowvote_logo.png) |
+| X banner (1500 × 500) | shipped | [`logo/shadowvote_banner.jpg`](../logo/shadowvote_banner.jpg) |
+| Minimal mark (violet glow) | shipped | [`logo/shadowvote_minimal_logo.jpg`](../logo/shadowvote_minimal_logo.jpg) |
 | Demo video thumbnail | to create | — |
 | Screenshots | shipped | [`../screenshots/`](../screenshots/) |

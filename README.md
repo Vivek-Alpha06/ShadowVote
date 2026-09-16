@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./frontend/public/favicon.svg" alt="ShadowVote Logo" width="150" style="border-radius: 16px;" />
+  <img src="./logo/shadowvote_logo.png" alt="ShadowVote Logo" width="180" style="border-radius: 16px;" />
   <h1>ShadowVote — Private Ballot Voting on Midnight</h1>
   <p><b>Vote Privately. Verify Publicly. &mdash; Secret Ballots on a Public Blockchain</b></p>
   <p>
@@ -45,8 +45,8 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 | 🌕 **Level 6 Preprod Users** | [LAUNCH_USERS.md](./LAUNCH_USERS.md) | **30 / 30** launch cohort — **80 unique Preprod users** across both |
 | 📖 **User Guide** | [docs/USAGE.md](./docs/USAGE.md) | Plain-English walkthrough — Getting Started on Preprod, Your First Transaction |
 | 📣 **Outreach & Onboarding Kit** | [docs/OUTREACH.md](./docs/OUTREACH.md) | Discord/X/DM copy, 16-step onboarding script, demo video checklist |
-| 🎨 **Brand Brief** | [docs/BRAND.md](./docs/BRAND.md) | Tagline, key messages, colour palette, X bio and banner concept |
 | 🐤 **Product X (Twitter) Profile** | [@shadow_vote](https://x.com/shadow_vote) | Launch posts, demo clips, and tester call-outs |
+| 🎨 **Brand Assets & Brief** | [logo/](./logo/) · [docs/BRAND.md](./docs/BRAND.md) | Primary mark, banner and minimal mark, plus tagline, key messages, palette and X bio |
 | 📜 **Product Proposal** | [PROPOSAL.md](./PROPOSAL.md) | Product thesis, data model, and the known gaps stated plainly |
 | ⚙️ **CI/CD Pipeline** | [View live workflow runs](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml) | Two-job GitHub Actions pipeline on every push — contract (Compact compile, ZK asset verification, 6 Vitest specs) and frontend (type-check + Vite build) |
 | 🧾 **Contract Source** | [`ShadowVote.compact`](./contract/src/ShadowVote.compact) | 8 exported circuits, 10 public ledger fields, 1 private witness |
@@ -240,9 +240,24 @@ The fourteen shipped changes are listed in the [Level 5 improvements table](#4-p
 * [`docs/BRAND.md`](./docs/BRAND.md) — brand brief, palette, X bio and banner concept.
 
 ### 5. Brand & Social Presence
+
+<div align="center">
+  <img src="./logo/shadowvote_banner.jpg" alt="ShadowVote banner — Vote Privately. Verify Publicly." width="900" />
+</div>
+
 * **Tagline:** *Vote Privately. Verify Publicly.*
 * **X Profile:** [@shadow_vote](https://x.com/shadow_vote)
 * **Palette:** monochrome greyscale ink with a single Signal Violet `#8B5CF6` accent — full system in [`docs/BRAND.md`](./docs/BRAND.md).
+
+**Brand assets**
+
+| Asset | File | Use |
+| :--- | :--- | :--- |
+| 🔺 **Primary mark** | [`logo/shadowvote_logo.png`](./logo/shadowvote_logo.png) | Interlocking S/V monogram, white on near-black. README header, X avatar, app icon. |
+| 🖼️ **Banner** | [`logo/shadowvote_banner.jpg`](./logo/shadowvote_banner.jpg) | 1500×500 wordmark lockup with tagline. X header, social cards. |
+| ◼️ **Minimal mark** | [`logo/shadowvote_minimal_logo.jpg`](./logo/shadowvote_minimal_logo.jpg) | Alternate monogram with a violet glow, for dark surfaces. |
+| ⚡ **Favicon** | [`frontend/public/favicon.svg`](./frontend/public/favicon.svg) | In-app browser tab icon. |
+| 🎨 **Brand brief** | [`docs/BRAND.md`](./docs/BRAND.md) | Tagline, key messages, palette with hex codes, X bio, voice. |
 
 ### 6. Submission Status
 
@@ -264,7 +279,7 @@ The fourteen shipped changes are listed in the [Level 5 improvements table](#4-p
 | 🧮 **Total Unique Preprod Users** | 70 | 🟢 **80** | 80 addresses, 80 unique, zero overlap |
 | 🛠️ **Improvements From Feedback** | Linked changes | 🟢 **14 shipped** | Improvement table above, each with a commit |
 | 🐤 **Product X Profile** | Live account | 🟢 Live | [@shadow_vote](https://x.com/shadow_vote) |
-| 🎨 **Brand Assets** | Logo / banner / bio | 🟡 Logo + favicon shipped; banner pending | [`docs/BRAND.md`](./docs/BRAND.md) |
+| 🎨 **Brand Assets** | Logo / banner / bio | 🟢 **Logo, banner, favicon, brief** | [`logo/`](./logo/) · [`docs/BRAND.md`](./docs/BRAND.md) |
 
 > 🟡 rows are open work, not claims. They are listed here rather than omitted, because a status table that only shows green is not a status table.
 
@@ -415,6 +430,7 @@ ShadowVote/
 │   ├── FEEDBACK.md              # feedback log and iterations
 │   ├── OUTREACH.md              # outreach copy, onboarding, video checklist
 │   └── BRAND.md                 # brand brief
+├── logo/                        # brand marks — logo, banner, minimal mark
 ├── screenshots/                 # submission proofs
 ├── USERS.md                     # Level 5 Preprod users (50)
 ├── LAUNCH_USERS.md              # Level 6 Preprod users (20)

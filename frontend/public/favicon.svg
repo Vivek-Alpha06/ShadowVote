@@ -1,16 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
   <defs>
-    <linearGradient id="sv-stroke" x1="10" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#a855f7"/>
-      <stop offset="0.55" stop-color="#8b5cf6"/>
-      <stop offset="1" stop-color="#22d3ee"/>
+    <linearGradient id="sv-grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#e4d4f4"/>
+      <stop offset="100%" stop-color="#a855f7"/>
     </linearGradient>
+    <radialGradient id="sv-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#191330"/>
+      <stop offset="100%" stop-color="#0c0c0e"/>
+    </radialGradient>
   </defs>
-  <rect width="48" height="48" rx="13" fill="#0a0618"/>
-  <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="13" stroke="#8b5cf6" stroke-opacity="0.4" stroke-width="1.5"/>
-  <g stroke="url(#sv-stroke)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M25.5 15.5c0-3.4-9.5-3.9-9.5 0.6 0 4.4 9.4 3 9.4 7.6 0 4.6-9.4 4.2-9.4 0.6"/>
-    <path d="M23 27.5 L28.5 38 L34 27.5"/>
-  </g>
-  <circle cx="34" cy="14.5" r="2.6" fill="#22d3ee"/>
+  <rect width="48" height="48" rx="12" fill="url(#sv-bg)"/>
+  <rect x="0.5" y="0.5" width="47" height="47" rx="12" stroke="#a855f7" stroke-opacity="0.3" stroke-width="1"/>
+  
+  <!-- Inverted SV Triangle Logo Paths -->
+  <path d="M 6 8 L 42 8 L 38.11 14.98 L 35.19 14.98 L 37.52 10.59 L 10.48 10.59 L 15.24 19.36 L 16.8 19.56 L 18.26 22.16 L 13.88 22.06 Z" fill="url(#sv-grad)" />
+  <path d="M 13.49 12.39 L 16.41 12.49 L 20.4 19.56 L 27.6 19.56 L 31.59 12.49 L 34.51 12.39 L 30.52 19.46 L 35.48 19.56 L 24 40 L 16.51 26.74 L 19.43 26.74 L 24 34.82 L 31.1 22.26 L 21.96 22.26 L 24 25.94 L 25.75 22.85 L 28.67 22.85 L 24 31.03 Z" fill="url(#sv-grad)" />
 </svg>
+
