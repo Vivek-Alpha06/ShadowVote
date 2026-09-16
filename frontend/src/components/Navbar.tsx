@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <div className="flex items-center gap-4">
           <Link to="/" className="transition-transform hover:scale-105">
-            <Logo size={32} />
+            <Logo size={38} />
           </Link>
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />

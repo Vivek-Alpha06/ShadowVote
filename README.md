@@ -28,7 +28,7 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 | Deliverable Resource | Direct Verification Link | Description / Details |
 | :--- | :--- | :--- |
 | 🚀 **Live Web Application** | [https://shadow-vote-frontend-one.vercel.app](https://shadow-vote-frontend-one.vercel.app/) | Production ShadowVote dApp running against Midnight Preprod |
-| ⚡ **Preprod Contract** | [`8e60d089…c143d` on Midnight Explorer](https://explorer.preprod.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) | Verifiable Compact contract address on Midnight Preprod |
+| ⚡ **Preprod Contract** | [`8e60d089…c143d` on Midnight Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) | Verifiable Compact contract address on Midnight Preprod |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/F7ObiswjYpo) | Full video walkthrough of the ShadowVote MVP |
 | 📊 **User Feedback Sheet** | [View Feedback Sheet](https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887) | All **80 verified responses** — name, wallet, rating, free-text feedback |
 | 📝 **User Feedback Form** | [Submit Feedback](https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform) | Google Form collector — wallet address, rating, what was tried, what confused you |
@@ -71,10 +71,10 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 ## 📸 Screenshots & Submission Proofs
 
 ### 1. Landing Page & Live Preprod Application
-<img src="./screenshots/Landing_page.png" alt="ShadowVote landing page" width="900" />
+<img src="./screenshots/Dashboard.png" alt="Elections dashboard" width="500" /> 
 
 ### 2. Elections Dashboard & Creating a Vote
-<img src="./screenshots/Dashboard.png" alt="Elections dashboard" width="440" /> <img src="./screenshots/Vote_creation.png" alt="Election creation" width="440" />
+<img src="./screenshots/Vote_creation.png" alt="Election creation" width="440" />
 
 ### 3. Signing With Lace & Successful Private Vote
 <img src="./screenshots/confirm_by_Lace.png" alt="Confirming in the Lace wallet" width="440" /> <img src="./screenshots/Vote_Successfully.png" alt="Vote cast successfully" width="440" />
@@ -110,7 +110,7 @@ ShadowVote is deployed and independently verifiable on **Midnight Preprod**:
 
 | Component | Address / Value | Status | Verification Link |
 | :--- | :--- | :---: | :--- |
-| 🗳️ **ShadowVote Contract** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` | 🟢 Live | [Midnight Explorer](https://explorer.preprod.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) |
+| 🗳️ **ShadowVote Contract** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` | 🟢 Live | [Midnight Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) |
 | 🌐 **Network** | Midnight **Preprod** | 🟢 Active | [explorer.preprod.midnight.network](https://explorer.preprod.midnight.network) |
 | 📦 **Compiled Artifacts** | [`contract/managed/shadowvote/`](./contract/managed/shadowvote/) | 🟢 Committed | contract · keys · zkir · compiler output |
 | 🔑 **Browser Prover Assets** | [`frontend/public/midnight/shadowvote/`](./frontend/public/midnight/shadowvote/) | 🟢 Served | ZK keys and zkir shipped to the client prover |

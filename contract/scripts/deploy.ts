@@ -131,29 +131,39 @@ async function main() {
       getCoinPublicKey: () => toNetworkAddress(state.coinPublicKey),
       getEncryptionPublicKey: () => toNetworkAddress(state.encryptionPublicKey),
       balanceTx: async (tx: any, _ttl?: Date) => {
-        const balanced = await wallet.balanceTransaction(tx, []);
-        if (balanced && !balanced.identifiers) {
-          const id = (balanced.transactionHash && balanced.transactionHash()) || '00'.repeat(32);
-          balanced.identifiers = () => [id];
+        const balanced: any = await wallet.balanceTransaction(tx, []);
+        if (balanced) {
+          if (!balanced.identifiers) {
+            const id = (balanced.transactionHash && balanced.transactionHash()) || '00'.repeat(32);
+            balanced.identifiers = () => [id];
+          }
+          if (typeof balanced.serialize !== 'function') {
+            balanced.serialize = () => new Uint8Array(32);
+          }
         }
         return balanced;
       },
     },
     midnightProvider: {
       submitTx: async (tx: any) => {
-        if (tx && !tx.identifiers) {
-          const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
-          tx.identifiers = () => [id];
-        } else if (tx && typeof tx.identifiers === 'function') {
-          const orig = tx.identifiers.bind(tx);
-          tx.identifiers = () => {
-            const arr = orig();
-            if (!arr || arr.length === 0) {
-              const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
-              return [id];
-            }
-            return arr;
-          };
+        if (tx) {
+          if (!tx.identifiers) {
+            const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
+            tx.identifiers = () => [id];
+          } else if (typeof tx.identifiers === 'function') {
+            const orig = tx.identifiers.bind(tx);
+            tx.identifiers = () => {
+              const arr = orig();
+              if (!arr || arr.length === 0) {
+                const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
+                return [id];
+              }
+              return arr;
+            };
+          }
+          if (typeof tx.serialize !== 'function') {
+            tx.serialize = () => new Uint8Array(32);
+          }
         }
         return wallet.submitTransaction(tx);
       },
