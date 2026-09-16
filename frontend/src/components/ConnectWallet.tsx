@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useWallet, WALLET_INSTALL_URL, NETWORK_LABELS } from '../hooks/useWallet';
+import { faucetUrl } from '../lib/faucet';
 import { runDiagnostic } from '../lib/midnightConnector';
 
 /**
@@ -19,6 +20,7 @@ export default function ConnectWallet({ title }: { title?: string }) {
     detecting,
     walletName,
     diagnostics,
+    networkId,
     error,
     clearError,
   } = useWallet();
@@ -66,6 +68,25 @@ export default function ConnectWallet({ title }: { title?: string }) {
           : detecting
             ? 'Looking for a Midnight wallet in this browser…'
             : 'Click connect — if no Midnight wallet responds, you’ll get the exact reason.'}
+      </p>
+
+      {/*
+        First-time onboarding cliff, straight from user feedback: testers
+        connected fine, then hit a raw RPC error on their first vote because
+        they had no DUST. Naming the requirement and linking the faucet BEFORE
+        they pick a candidate turns a dead end into a two-minute detour.
+      */}
+      <p className="max-w-sm text-xs text-slate-500">
+        New to Midnight? You need test tokens registered for DUST generation before you can vote —
+        reading elections is always free.{' '}
+        <a
+          href={faucetUrl(networkId)}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-semibold text-shadow-violet underline-offset-2 hover:underline"
+        >
+          Get test tokens ↗
+        </a>
       </p>
 
       {wallets.length > 1 ? (

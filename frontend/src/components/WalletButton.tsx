@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useWallet } from '../hooks/useWallet';
 import { shortAddress } from '../lib/format';
+import DustBalance from './DustBalance';
 
 export default function WalletButton() {
   const {
@@ -20,6 +21,9 @@ export default function WalletButton() {
   if (connected && address) {
     return (
       <div className="flex items-center gap-2">
+        {/* Balance first: testers asked to see their gas before starting a
+            vote, not after the transaction failed. */}
+        <DustBalance />
         <div className="glass flex items-center gap-2 px-3 py-1.5 text-sm" title={address}>
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.6)]" />
           <span className="font-mono text-slate-200">{shortAddress(address)}</span>

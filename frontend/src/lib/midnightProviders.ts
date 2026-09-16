@@ -22,6 +22,7 @@ import { toHex, fromHex } from '@midnight-ntwrk/midnight-js-utils';
 import { logStep, timed } from './activityLog';
 import { ShadowVoteZkConfigProvider, verifyZkAssets } from './zkConfig';
 import { browserPrivateStateProvider } from './browserPrivateStateProvider';
+import { FAUCET_DOCS_URL } from './faucet';
 import * as ledger from '@midnight-ntwrk/ledger-v8';
 
 /** The five circuits compiled from ShadowVote.compact. */
@@ -415,7 +416,12 @@ export async function assertCanPayFees(api: ConnectedAPI): Promise<void> {
         `(DUST balance 0, generation cap ${funds.dustCap})`
       : 'This wallet has no funds on this network.\n\n' +
         'Get tNIGHT from the faucet for the connected account, register it for ' +
-        'DUST generation in Lace, then retry.',
+        'DUST generation in Lace, then retry.\n\n' +
+        // Testers reported getting "a cryptic RPC error code instead of a
+        // friendly message saying I need gas tokens from the faucet" — so the
+        // message now carries the link itself rather than naming the faucet
+        // and leaving them to find it.
+        `Faucet and setup guide: ${FAUCET_DOCS_URL}`,
   );
 }
 
