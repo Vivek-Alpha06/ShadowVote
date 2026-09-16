@@ -14,6 +14,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
 import type { TxStage } from '../lib/txStages';
+import CopyLinkButton from '../components/ShareActions';
 
 export default function ElectionDetails() {
   const { id = '' } = useParams();
@@ -135,6 +136,12 @@ export default function ElectionDetails() {
           <span>Ends {formatDate(election.endTime)}</span>
           <span>{election.totalVotes} votes cast</span>
         </div>
+
+        {/* Organizers were hand-selecting the URL out of the address bar to
+            paste into Telegram and Discord. */}
+        <div className="mt-4">
+          <CopyLinkButton url={window.location.href} label="Copy election link" />
+        </div>
       </motion.div>
 
       {/* Voting area */}
@@ -160,7 +167,9 @@ export default function ElectionDetails() {
         ) : (
           <>
             <h2 className="mb-3 font-bold text-slate-100">Select a candidate</h2>
-            <div className="space-y-3">
+            {/* Wider gaps on mobile: a thumb landing between two rows used
+                to select the wrong candidate, and a vote cannot be undone. */}
+            <div className="space-y-4 sm:space-y-3">
               {election.candidates.map((c) => (
                 <CandidateCard
                   key={c.index}

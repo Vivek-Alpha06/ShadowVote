@@ -8,6 +8,9 @@ import ResultCard from '../components/ResultCard';
 import StatusBadge from '../components/StatusBadge';
 import Timer from '../components/Timer';
 import { formatDate } from '../lib/format';
+import CopyLinkButton from '../components/ShareActions';
+import { downloadCsv, resultsToCsv } from '../lib/exportResults';
+import { getSession } from '../lib/chainSession';
 
 export default function Results() {
   const { id = '' } = useParams();
@@ -29,6 +32,26 @@ export default function Results() {
     refresh();
   }, [refresh]);
 
+  /**
+   * Keep polling after the deadline until the tally actually appears.
+   *
+   *   "When an election ended, the page did not auto-refresh the results. I
+   *    had to manually reload the browser 3 times before the tally card
+   *    appeared."  -- Debasmita Roy, 3 stars
+   *
+   * The Timer already fired one refresh at T=0, which was the bug: the
+   * deadline passing and the ledger reporting the election closed are not the
+   * same instant, so that single refresh reliably read a still-sealed state
+   * and then stopped. Poll instead, and stop as soon as results are revealed.
+   */
+  useEffect(() => {
+    if (!results || results.revealed) return;
+    if (Date.now() < results.endTime) return;
+
+    const id = window.setInterval(refresh, 5_000);
+    return () => window.clearInterval(id);
+  }, [results, refresh]);
+
   if (loading) return <Spinner label="Tallying results…" />;
   if (!election || !results)
     return (
@@ -41,6 +64,7 @@ export default function Results() {
       </div>
     );
 
+  const shareUrl = window.location.href;
   const ranked = results.results ? [...results.results].sort((a, b) => b.votes - a.votes) : [];
 
   return (
@@ -97,6 +121,30 @@ export default function Results() {
                 rank={i + 1}
               />
             ))}
+          </div>
+
+          {/* Organizer tools. Everything here is public ledger state — a tally
+              contains nothing that could identify a voter. */}
+          <div className="glass mt-6 flex flex-wrap items-center justify-between gap-3 p-4">
+            <div className="text-sm">
+              <p className="font-semibold text-slate-200">Share or archive this result</p>
+              <p className="text-slate-400">
+                The export carries the contract address and election id, so anyone you send it to
+                can check it against the chain instead of taking your word for it.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-start gap-2">
+              <CopyLinkButton url={shareUrl} label="Copy results link" />
+              <button
+                type="button"
+                onClick={() =>
+                  downloadCsv(election, resultsToCsv(election, results, getSession()?.contractAddress ?? null))
+                }
+                className="btn-primary"
+              >
+                ⬇ Download CSV
+              </button>
+            </div>
           </div>
         </>
       ) : (
