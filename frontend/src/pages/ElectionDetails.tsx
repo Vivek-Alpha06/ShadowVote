@@ -13,6 +13,7 @@ import ConnectWallet from '../components/ConnectWallet';
 import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
+import type { TxStage } from '../lib/txStages';
 
 export default function ElectionDetails() {
   const { id = '' } = useParams();
@@ -26,6 +27,8 @@ export default function ElectionDetails() {
   const [voted, setVoted] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [stage, setStage] = useState<TxStage | null>(null);
+  const [voteError, setVoteError] = useState<string | null>(null);
   const [closing, setClosing] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -39,20 +42,48 @@ export default function ElectionDetails() {
     refresh();
   }, [refresh]);
 
+  /**
+   * A wallet that disconnects mid-proof used to leave the modal spinning
+   * forever with no way out — reported as an infinite loading spinner that
+   * only a reload cleared. The proof itself cannot be cancelled, but the UI
+   * must not pretend it is still on track.
+   */
+  useEffect(() => {
+    if (connected || !submitting) return;
+    setSubmitting(false);
+    setStage(null);
+    setVoteError(
+      'Your wallet disconnected while the proof was being generated, so the vote was never ' +
+        'submitted. Reconnect and try again — your selection is still here.',
+    );
+  }, [connected, submitting]);
+
   async function confirmVote() {
     if (selected === null || !address) return;
     setSubmitting(true);
+    setVoteError(null);
+    setStage(null);
     try {
-      await contractService.castVote(id, selected, address);
+      await contractService.castVote(id, selected, address, setStage);
       toast.success('Your private vote was cast 🔒');
       setModalOpen(false);
       setVoted(true);
       await refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Vote failed');
+      // Deliberately NOT a toast-and-close: a toast disappears, and closing the
+      // modal discarded the ballot so the voter had to re-pick and re-prove
+      // from scratch. Keep the modal, keep the selection, offer a retry.
+      setVoteError(err instanceof Error ? err.message : 'The vote could not be submitted.');
     } finally {
       setSubmitting(false);
+      setStage(null);
     }
+  }
+
+  function closeVoteModal() {
+    setModalOpen(false);
+    setVoteError(null);
+    setStage(null);
   }
 
   async function handleClose() {
@@ -175,8 +206,10 @@ export default function ElectionDetails() {
         open={modalOpen}
         candidate={selectedCandidate}
         submitting={submitting}
+        stage={stage}
+        error={voteError}
         onConfirm={confirmVote}
-        onClose={() => setModalOpen(false)}
+        onClose={closeVoteModal}
       />
     </div>
   );

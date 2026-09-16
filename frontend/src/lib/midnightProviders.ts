@@ -203,16 +203,30 @@ export function configureNetwork(networkId: string): void {
   setNetworkId(networkId);
 }
 
-/** Logs every call the proof provider makes, without changing behaviour. */
+/**
+ * Logs every call the proof provider makes, and reports the proving phase.
+ *
+ * Proving is reported — not merely logged — because it is the longest step and
+ * it runs BEFORE the wallet's sign prompt, so from the outside it is
+ * indistinguishable from a hang. Testers on mid-range Android read a silent
+ * 25-second proving phase as a crashed tab and killed the page mid-vote.
+ */
 function instrumentProofProvider<T extends object>(provider: T, uri: string): T {
   return new Proxy(provider, {
     get(target, prop, receiver) {
       const value = Reflect.get(target, prop, receiver);
       if (typeof value !== 'function' || typeof prop !== 'string') return value;
       return (...args: unknown[]) => {
+        const proving = /^prove/i.test(prop);
+        if (proving) report('Generating zero-knowledge proof…');
+
         const result = (value as (...a: unknown[]) => unknown).apply(target, args);
         if (result instanceof Promise) {
-          return timed(`proofProvider.${prop}() via ${uri}`, () => result);
+          const settled = timed(`proofProvider.${prop}() via ${uri}`, () => result);
+          // Report completion but never swallow the rejection: the caller's
+          // own catch must still see it.
+          if (proving) settled.then(() => report('Proof generated.'), () => {});
+          return settled;
         }
         return result;
       };

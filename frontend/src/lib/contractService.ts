@@ -23,6 +23,49 @@ import type {
 } from '../types';
 import { requireSession, getSession } from './chainSession';
 import { addTxRecord } from './txHistory';
+import { stageFromProgress, type TxStage } from './txStages';
+
+/** Notified as a write transaction moves through its stages. */
+export type StageListener = (stage: TxStage) => void;
+
+/**
+ * Run a write with stage reporting attached.
+ *
+ * The provider bridge narrates balancing and submission through a single
+ * module-level sink, so the sink is claimed for the duration of one write and
+ * always released — leaving it attached would make a later, unrelated
+ * transaction drive this modal's checklist.
+ *
+ * Stages only ever move FORWARD. The bridge re-reports some steps on retry
+ * inside the SDK, and a checklist that walked backwards read as a failure to
+ * testers even when the transaction was fine.
+ */
+async function withStages<T>(onStage: StageListener | undefined, run: () => Promise<T>): Promise<T> {
+  if (!onStage) return run();
+
+  const { onProviderProgress } = await import('./midnightProviders');
+  const { stageIndex } = await import('./txStages');
+
+  let highest = -1;
+  const advance = (stage: TxStage) => {
+    const i = stageIndex(stage);
+    if (i <= highest) return;
+    highest = i;
+    onStage(stage);
+  };
+
+  advance('checking');
+  onProviderProgress((step) => {
+    const stage = stageFromProgress(step);
+    if (stage) advance(stage);
+  });
+
+  try {
+    return await run();
+  } finally {
+    onProviderProgress(null);
+  }
+}
 
 // The Midnight SDK (WASM + Node-oriented deps) is loaded ON DEMAND. A static
 // import would pull the whole stack into the initial bundle, so any failure in
@@ -249,12 +292,19 @@ export const contractService = {
   },
 
   /** Submits a real transaction; the candidate choice stays a private input. */
-  async castVote(electionId: string, candidateIndex: number, _wallet: string): Promise<void> {
-    await assertCanPay();
+  async castVote(
+    electionId: string,
+    candidateIndex: number,
+    _wallet: string,
+    onStage?: StageListener,
+  ): Promise<void> {
     const { txHashOf } = await chain();
-    const result = await withDustDiagnostics(() =>
-      circuits().castVote(BigInt(electionId), BigInt(candidateIndex)),
-    );
+    const result = await withStages(onStage, async () => {
+      await assertCanPay();
+      return withDustDiagnostics(() =>
+        circuits().castVote(BigInt(electionId), BigInt(candidateIndex)),
+      );
+    });
     recordTx('Cast vote', txHashOf(result) ?? (await latestSubmittedHash()), electionId);
   },
 
