@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>('active');
   const [category, setCategory] = useState<ElectionCategory | 'all'>('all');
+  const [query, setQuery] = useState('');
 
   const refresh = useCallback(async () => {
     setElections(await contractService.listElections());
@@ -48,10 +49,31 @@ export default function Dashboard() {
     return [...seen];
   }, [elections]);
 
+  /**
+   * Text search over name and description.
+   *
+   *   "There is no search bar or filter by status on the home page. When
+   *    scrolling through many elections, finding my college poll was
+   *    difficult."  -- Amitav Sen, 4 stars
+   *
+   * Status and type filters already existed; what was missing was finding a
+   * specific election by name once the list grew past a screenful. Searching
+   * runs over already-loaded public metadata — it costs nothing and reaches
+   * the chain not at all.
+   */
   const shown = useMemo(() => {
     const byStatus = filter === 'active' ? active : filter === 'ended' ? ended : elections;
-    return category === 'all' ? byStatus : byStatus.filter((e) => e.category === category);
-  }, [filter, category, active, ended, elections]);
+    const byCategory = category === 'all' ? byStatus : byStatus.filter((e) => e.category === category);
+
+    const q = query.trim().toLowerCase();
+    if (!q) return byCategory;
+    return byCategory.filter(
+      (e) =>
+        e.name.toLowerCase().includes(q) ||
+        e.description.toLowerCase().includes(q) ||
+        e.candidates.some((c) => c.name.toLowerCase().includes(q)),
+    );
+  }, [filter, category, query, active, ended, elections]);
 
   const stats = [
     { label: 'Elections', value: elections.length, accent: 'text-slate-100' },
@@ -128,8 +150,33 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Search — only worth the space once there is enough to get lost in. */}
+      {elections.length > 3 && (
+        <div className="relative mt-7">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" aria-hidden>
+            🔍
+          </span>
+          <input
+            type="search"
+            className="input pl-9"
+            placeholder="Search elections by name, description or candidate…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search elections"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-300"
+            >
+              clear
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="mt-7 flex flex-wrap items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <div className="inline-flex rounded-xl border border-white/10 bg-white/[0.02] p-1">
           {FILTERS.map((f) => (
             <button
@@ -186,20 +233,29 @@ export default function Dashboard() {
             animate={{ opacity: 1 }}
             className="glass grid place-items-center px-6 py-20 text-center"
           >
-            <p className="text-4xl">🗳️</p>
+            <p className="text-4xl">{query ? '🔍' : '🗳️'}</p>
             <p className="mt-3 font-semibold text-slate-200">
-              {category === 'all'
+              {query
+                ? `Nothing matches “${query.trim()}”`
+                : category === 'all'
                 ? `No ${filter === 'all' ? '' : filter} elections`
                 : `No ${categoryMeta(category).label.toLowerCase()}s here`}
             </p>
             <p className="mt-1 max-w-sm text-sm text-slate-400">
-              {category !== 'all'
+              {query
+                ? 'Try a different word, or clear the search.'
+                : category !== 'all'
                 ? 'Try another type, or clear the filter.'
                 : filter === 'ended'
                   ? 'Elections appear here once their voting window closes.'
                   : 'Create the first one to get started.'}
             </p>
-            {category === 'all' && filter !== 'ended' && (
+            {query && (
+              <button onClick={() => setQuery('')} className="btn-ghost mt-5">
+                Clear search
+              </button>
+            )}
+            {!query && category === 'all' && filter !== 'ended' && (
               <Link to="/create" className="btn-primary mt-5">
                 Create an election
               </Link>

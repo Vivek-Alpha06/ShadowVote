@@ -1,4 +1,14 @@
 // Reusable "what is public vs private" explainer — a core UX requirement.
+//
+// The jargon note below exists because of user feedback:
+//
+//   "The term Nullifier was confusing for non-technical users in our group.
+//    Adding a short 1-line tooltip explaining it is an anonymous voting ticket
+//    would help."  -- Sharmistha Guha, 3 stars
+//
+// The word appears in the app, in the explorer and in every explanation of how
+// the privacy guarantee works, so it cannot simply be removed — but it can be
+// defined in one sentence at the place people meet it.
 export default function PrivacyNote() {
   return (
     <div className="glass p-5">
@@ -27,6 +37,19 @@ export default function PrivacyNote() {
           </ul>
         </div>
       </div>
+
+      <p className="mt-4 border-t border-white/5 pt-3 text-xs text-slate-500">
+        <span
+          className="font-semibold text-slate-300 underline decoration-dotted underline-offset-2"
+          title="A one-way fingerprint of (this election, you). It stops you voting twice here, is a completely different value in every other election, and cannot be traced back to your wallet."
+        >
+          Nullifier
+        </span>{' '}
+        — the word you'll see on the explorer. Think of it as an{' '}
+        <span className="text-slate-300">anonymous voting ticket</span>: it proves this election has
+        already counted you, without saying who you are or what you chose. You get a different,
+        unlinkable ticket in every other election.
+      </p>
     </div>
   );
 }
