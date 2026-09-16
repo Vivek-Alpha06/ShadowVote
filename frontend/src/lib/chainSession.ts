@@ -31,13 +31,26 @@ const LS_CONTRACT_ADDRESS = 'shadowvote:contract-address';
  * anything worked. See `contractForNetwork` for why this is a map.
  */
 const CONTRACTS: Record<string, string> = {
-  // Preprod only. This address was previously listed under `preview` as well,
-  // which was wrong and failed SILENTLY: a contract exists only on the network
-  // it was deployed to, so a Preview wallet would connect, "join" an address
-  // that does not exist there, and show an empty election list with no error.
-  // Every verified user wallet is mn_addr_preprod1…, which is the evidence
-  // this deployment is on preprod. Add a network here only after deploying to
-  // it and confirming the address on that network's explorer.
+  // ⚠️ UNVERIFIED — this address does not currently resolve on preprod.
+  //
+  // Checked directly against the preprod indexer:
+  //   contractAction(address: "8e60d089…c143d")  ->  null
+  // while a contract taken from a recent preprod block returns a ContractCall
+  // from the same query, so the query shape is right and the null is real.
+  // contract/deploy.log records the deploy failing with
+  // "expected instance of LedgerParameters" and EXIT_CODE=1, so this address
+  // was most likely never the result of a successful deploy.
+  //
+  // Keeping the entry so the join path stays exercised and the failure is
+  // visible rather than silent. Replace it with the address printed by a
+  // SUCCESSFUL `npm --workspace contract run deploy`.
+  //
+  // Note it was previously listed under `preview` as well, which cannot be
+  // true: a contract exists only on the network it was deployed to.
+  //
+  // Do NOT trust the block explorer to verify this. Both
+  // explorer.preprod and explorer.preview return HTTP 200 with a byte-identical
+  // SPA shell for any address, so a 200 there means nothing. Query the indexer.
   preprod: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
 };
 
@@ -133,7 +146,23 @@ async function loadSecretKey(providers: MidnightProviders): Promise<Uint8Array> 
 const DEPLOY_TIMEOUT_MS = 6 * 60_000;
 const JOIN_TIMEOUT_MS = 90_000;
 
-async function withDeadline<T>(promise: Promise<T>, ms: number, what: string): Promise<T> {
+/**
+ * `submits` distinguishes the two callers, because their failure advice is
+ * opposite and getting it wrong is alarming.
+ *
+ * Deploying really can leave a paid transaction in flight, so "check before
+ * retrying" is right there. Joining is `findDeployedContract` — a read. It
+ * submits nothing and costs nothing, so warning about paying a fee twice is
+ * both false and frightening, and it hides the actual cause: a join that hangs
+ * means the indexer never returned state for that address, which almost always
+ * means no contract is deployed there.
+ */
+async function withDeadline<T>(
+  promise: Promise<T>,
+  ms: number,
+  what: string,
+  submits: boolean,
+): Promise<T> {
   let timer: number | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = window.setTimeout(
@@ -141,8 +170,13 @@ async function withDeadline<T>(promise: Promise<T>, ms: number, what: string): P
         reject(
           new Error(
             `${what} did not complete within ${Math.round(ms / 60_000)} minutes.\n\n` +
-              `The transaction may still have been submitted — check your wallet's history ` +
-              `before retrying, to avoid paying the fee twice.`,
+              (submits
+                ? `The transaction may still have been submitted — check your wallet's history ` +
+                  `before retrying, to avoid paying the fee twice.`
+                : `Joining only READS the chain — nothing was submitted and nothing was charged.\n\n` +
+                  `The usual cause is that no contract is deployed at this address on this ` +
+                  `network. Confirm the address, check your wallet is on the right network, or ` +
+                  `deploy a new contract.`),
           ),
         ),
       ms,
@@ -254,6 +288,7 @@ async function openSessionInner({
       joinShadowVote(providers, target),
       JOIN_TIMEOUT_MS,
       `Joining ${target.slice(0, 18)}…`,
+      false,
     );
     address = target;
   } else {
@@ -273,6 +308,7 @@ async function openSessionInner({
       deployShadowVote(providers),
       DEPLOY_TIMEOUT_MS,
       'Deploying contract',
+      true,
     );
     const deployed = contractAddressOf(contract);
     if (!deployed) throw new Error('Deploy succeeded but no contract address was returned.');
