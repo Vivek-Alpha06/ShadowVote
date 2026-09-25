@@ -81,6 +81,12 @@ device — only a zero-knowledge proof that the choice was valid does.
 
 <img src="./screenshots/confirmation.png" alt="Vote confirmation after a private ballot is cast" width="900" />
 
+#### 🗳️ Step-by-Step Private Voting Flow
+
+| 1. Select Candidate | 2. Proving & Submitting | 3. Ballot Confirmed |
+| :---: | :---: | :---: |
+| <img src="./screenshots/voting.png" alt="Select Candidate" width="280" /> | <img src="./screenshots/voting_process.png" alt="Proving & Submitting" width="280" /> | <img src="./screenshots/vote_done.png" alt="Ballot Confirmed" width="280" /> |
+
 ### 5. Results — Sealed Until Close
 Tallies stay hidden while voting is open and publish automatically the moment the
 deadline passes, which removes the bandwagon effect from live on-chain counts.
