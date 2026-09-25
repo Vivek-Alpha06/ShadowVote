@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./logo/shadowvote_banner.jpg" alt="ShadowVote — Vote Privately. Verify Publicly." width="100%" />
+  <img src="./logo/shadowvote_banner_wide.jpg" alt="ShadowVote — Vote Privately. Verify Publicly." width="100%" />
   <h1>ShadowVote — Private Ballot Voting on Midnight</h1>
   <p><b>Secret ballots on a public blockchain, built on Midnight.</b></p>
   <p>
@@ -279,7 +279,8 @@ rest of the system.
 | Asset | File | Use |
 | :--- | :--- | :--- |
 | 🔺 **Primary mark** | [`logo/shadowvote_logo.png`](./logo/shadowvote_logo.png) | Interlocking S/V monogram, white on near-black. X avatar, app icon, favicon source. |
-| 🖼️ **Banner** | [`logo/shadowvote_banner.jpg`](./logo/shadowvote_banner.jpg) | 1920×1080 wordmark lockup with tagline. README hero, social cards. |
+| 🖼️ **Banner** | [`logo/shadowvote_banner_wide.jpg`](./logo/shadowvote_banner_wide.jpg) | 1920×640 (3:1) wordmark lockup with tagline. README hero, X header. |
+| 🖼️ **Social card** | [`logo/shadowvote_banner.jpg`](./logo/shadowvote_banner.jpg) | 1920×1080 (16:9) of the same lockup. Link previews, slides, video end cards. |
 | ◼️ **Minimal mark** | [`logo/shadowvote_minimal_logo.jpg`](./logo/shadowvote_minimal_logo.jpg) | Alternate monogram with a violet glow, for dark surfaces. |
 | ⚡ **Favicon** | [`frontend/public/favicon.svg`](./frontend/public/favicon.svg) | In-app browser tab icon. |
 | 🎨 **Brand brief** | [`docs/BRAND.md`](./docs/BRAND.md) | Tagline, key messages, palette with hex codes, X bio, voice. |
