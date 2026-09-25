@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="./logo/shadowvote_logo.png" alt="ShadowVote Logo" width="180" style="border-radius: 16px;" />
+  <img src="./logo/shadowvote_banner.jpg" alt="ShadowVote — Vote Privately. Verify Publicly." width="100%" />
   <h1>ShadowVote — Private Ballot Voting on Midnight</h1>
-  <p><b>Vote Privately. Verify Publicly. &mdash; Secret Ballots on a Public Blockchain</b></p>
+  <p><b>Secret ballots on a public blockchain, built on Midnight.</b></p>
   <p>
     <a href="https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml"><img src="https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI build status" /></a>
     <a href="https://github.com/Vivek-Alpha06/ShadowVote/actions"><img src="https://img.shields.io/badge/contract%20tests-6%20passing-brightgreen" alt="6 contract tests passing" /></a>
@@ -267,9 +267,8 @@ The fourteen shipped changes are listed in the [Level 5 improvements table](#4-p
 
 ### 5. Brand & Social Presence
 
-<div align="center">
-  <img src="./logo/shadowvote_banner.jpg" alt="ShadowVote banner — Vote Privately. Verify Publicly." width="900" />
-</div>
+The banner at the top of this README is the primary lockup; the marks below are the
+rest of the system.
 
 * **Tagline:** *Vote Privately. Verify Publicly.*
 * **X Profile:** [@shadow_vote](https://x.com/shadow_vote)
@@ -279,8 +278,8 @@ The fourteen shipped changes are listed in the [Level 5 improvements table](#4-p
 
 | Asset | File | Use |
 | :--- | :--- | :--- |
-| 🔺 **Primary mark** | [`logo/shadowvote_logo.png`](./logo/shadowvote_logo.png) | Interlocking S/V monogram, white on near-black. README header, X avatar, app icon. |
-| 🖼️ **Banner** | [`logo/shadowvote_banner.jpg`](./logo/shadowvote_banner.jpg) | 1500×500 wordmark lockup with tagline. X header, social cards. |
+| 🔺 **Primary mark** | [`logo/shadowvote_logo.png`](./logo/shadowvote_logo.png) | Interlocking S/V monogram, white on near-black. X avatar, app icon, favicon source. |
+| 🖼️ **Banner** | [`logo/shadowvote_banner.jpg`](./logo/shadowvote_banner.jpg) | 1920×1080 wordmark lockup with tagline. README hero, social cards. |
 | ◼️ **Minimal mark** | [`logo/shadowvote_minimal_logo.jpg`](./logo/shadowvote_minimal_logo.jpg) | Alternate monogram with a violet glow, for dark surfaces. |
 | ⚡ **Favicon** | [`frontend/public/favicon.svg`](./frontend/public/favicon.svg) | In-app browser tab icon. |
 | 🎨 **Brand brief** | [`docs/BRAND.md`](./docs/BRAND.md) | Tagline, key messages, palette with hex codes, X bio, voice. |
