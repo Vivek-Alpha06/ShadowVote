@@ -7,10 +7,10 @@ import {
   subscribe,
   savedContractAddress,
   contractForNetwork,
-  supportedNetworks,
   type ChainSession,
 } from '../lib/chainSession';
 import { shortAddress } from '../lib/format';
+import { NETWORK_LABEL_OVERRIDE } from '../lib/networkPreference';
 import { getLog, subscribeLog, resetLog, formatLog, logError } from '../lib/activityLog';
 
 /**
@@ -44,7 +44,7 @@ export default function ChainPanel() {
 
   useEffect(() => subscribe(() => setSession(getSession())), []);
 
-  const saved = savedContractAddress();
+  const saved = savedContractAddress(networkId);
   const shipped = contractForNetwork(networkId);
   /**
    * Is there anything to join on this network? An address is only valid on the
@@ -116,7 +116,7 @@ export default function ChainPanel() {
       {busy ? (
         <>
           <div className="flex items-center gap-3">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-shadow-purple border-t-transparent" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-transparent" />
             <div>
               <p className="font-semibold text-slate-200">{step ?? 'Working…'}</p>
               <p className="text-xs text-slate-500">{busySubtitle(step)}</p>
@@ -129,14 +129,15 @@ export default function ChainPanel() {
           <p className="font-semibold text-amber-200">⛓ Not connected to a contract yet</p>
           {networkMatches ? (
             <p className="mt-1 text-slate-400">
-              Join the deployed ShadowVote contract on <strong>{networkId ?? 'this network'}</strong>
+              Join the deployed ShadowVote contract on{' '}
+              <strong>{NETWORK_LABEL_OVERRIDE ?? networkId ?? 'this network'}</strong>
               , or deploy your own. Deploying submits a real transaction and costs a fee.
             </p>
           ) : (
             <p className="mt-1 text-amber-300/90">
-              Your wallet is on <strong>{networkId}</strong>, where this build has no deployed
-              contract. It ships one for <strong>{supportedNetworks().join(', ')}</strong> — switch
-              networks to join it, or deploy your own on {networkId}.
+              Your wallet is on <strong>{NETWORK_LABEL_OVERRIDE ?? networkId}</strong>, where this
+              build has no deployed contract. Switch your wallet's Midnight network, or deploy your
+              own here.
             </p>
           )}
 
@@ -214,7 +215,7 @@ function ActivityLog() {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
-          className="text-xs font-semibold text-shadow-purple hover:underline"
+          className="text-xs font-semibold text-white hover:underline"
         >
           {copied ? '✓ Copied' : 'Copy log'}
         </button>

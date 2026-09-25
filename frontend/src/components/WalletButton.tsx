@@ -9,8 +9,6 @@ export default function WalletButton() {
     connected,
     connecting,
     step,
-    walletName,
-    networkId,
     error,
     connect,
     reloadAndConnect,
@@ -27,11 +25,6 @@ export default function WalletButton() {
         <div className="glass flex items-center gap-2 px-3 py-1.5 text-sm" title={address}>
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.6)]" />
           <span className="font-mono text-slate-200">{shortAddress(address)}</span>
-          {(walletName || networkId) && (
-            <span className="hidden rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-slate-400 sm:inline">
-              {[walletName, networkId].filter(Boolean).join(' · ')}
-            </span>
-          )}
         </div>
         <button onClick={disconnect} className="btn-ghost px-3 py-1.5 text-sm" title="Disconnect">
           Disconnect

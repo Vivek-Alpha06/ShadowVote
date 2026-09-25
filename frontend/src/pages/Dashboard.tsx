@@ -7,6 +7,7 @@ import ElectionCard from '../components/ElectionCard';
 import Spinner from '../components/Spinner';
 import { useWallet, WALLET_INSTALL_URL } from '../hooks/useWallet';
 import ChainPanel from '../components/ChainPanel';
+import { PageShell, PageHeader, Reveal } from '../components/Motion';
 
 type Filter = 'active' | 'ended' | 'all';
 
@@ -78,44 +79,34 @@ export default function Dashboard() {
   const stats = [
     { label: 'Elections', value: elections.length, accent: 'text-slate-100' },
     { label: 'Open now', value: active.length, accent: 'text-emerald-300' },
-    { label: 'Votes cast', value: totalVotes, accent: 'text-shadow-cyan' },
+    { label: 'Votes cast', value: totalVotes, accent: 'text-zinc-300' },
   ];
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-6xl px-4 py-10">
-      {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Elections
-          </h1>
-          <p className="mt-1.5 text-slate-400">
-            Anyone can start a vote and anyone can take part — ballots stay private, results stay
-            public.
-          </p>
-        </div>
-        <Link to="/create" className="btn-primary shrink-0">
-          + Create
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Private ballots · Public tally"
+        title="Elections"
+        subtitle="Anyone can start a vote and anyone can take part — ballots stay private, results stay public."
+        actions={
+          <Link to="/create" className="btn-primary shrink-0">
+            + Create
+          </Link>
+        }
+      />
 
       {/* Stats */}
       <div className="mt-7 grid grid-cols-3 gap-3">
         {stats.map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="glass p-4 text-center sm:p-5"
-          >
+          <Reveal key={s.label} index={i + 3} className="glass p-4 text-center sm:p-5">
             <p className={`text-2xl font-extrabold tabular-nums sm:text-3xl ${s.accent}`}>
               {loading ? '—' : s.value}
             </p>
             <p className="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">
               {s.label}
             </p>
-          </motion.div>
+          </Reveal>
         ))}
       </div>
 
@@ -184,7 +175,7 @@ export default function Dashboard() {
               onClick={() => setFilter(f.value)}
               className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 filter === f.value
-                  ? 'bg-shadow-purple/20 text-white'
+                  ? 'bg-white/10 text-white'
                   : 'text-slate-400 hover:text-slate-100'
               }`}
             >
@@ -211,7 +202,7 @@ export default function Dashboard() {
                   onClick={() => setCategory(c)}
                   className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                     on
-                      ? 'border-shadow-purple bg-shadow-purple/20 text-slate-100'
+                      ? 'border-white/40 bg-white/10 text-slate-100'
                       : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-slate-200'
                   }`}
                 >
@@ -270,5 +261,6 @@ export default function Dashboard() {
         )}
       </div>
     </div>
+    </PageShell>
   );
 }

@@ -27,7 +27,7 @@ export default function Timer({ endTime, onEnd }: { endTime: number; onEnd?: () 
 
   const ended = label === 'Ended';
   return (
-    <span className={`font-mono text-sm ${ended ? 'text-slate-500' : 'text-shadow-cyan'}`}>
+    <span className={`font-mono text-sm ${ended ? 'text-slate-500' : 'text-zinc-300'}`}>
       {ended ? '⏱ Voting ended' : `⏱ ${label}`}
     </span>
   );

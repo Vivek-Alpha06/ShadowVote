@@ -17,3 +17,14 @@ contract/src/managed/
 *-sk-*.txt
 *.pem
 *.key
+
+# Generated wallets and wallet sync state. These hold SEEDS and admin secret
+# keys in plain text — `wallets/preprod_deployer_wallet.json` carries both, and
+# the 73-wallet files carry 73 more. Nothing here may ever reach the repository.
+wallets/
+*_wallet.json
+*_wallets.json
+*_wallets.csv
+.sync-cache/
+contract/.sync-cache/
+PREPROD_*_USERS.md

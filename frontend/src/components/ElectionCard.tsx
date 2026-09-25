@@ -42,7 +42,7 @@ export default function ElectionCard({
           <span className="text-xs text-slate-500">
             {election.totalVotes} vote{election.totalVotes === 1 ? '' : 's'} cast
           </span>
-          <span className="text-sm font-semibold text-shadow-purple">
+          <span className="text-sm font-semibold text-white">
             {election.status === 'CLOSED' ? 'View results →' : 'Vote →'}
           </span>
         </div>

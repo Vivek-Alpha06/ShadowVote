@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
+import { PageShell } from '../components/Motion';
 import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../hooks/useToast';
 import ConnectWallet from '../components/ConnectWallet';
@@ -171,6 +172,7 @@ export default function CreateElection() {
   }
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-2xl px-4 py-10">
       <h1 className="text-3xl font-extrabold tracking-tight">Create an election</h1>
       <p className="mb-6 mt-1 text-slate-400">
@@ -211,7 +213,7 @@ export default function CreateElection() {
                   className={
                     'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-semibold transition ' +
                     (active
-                      ? 'border-shadow-purple bg-shadow-purple/20 text-slate-100'
+                      ? 'border-white/40 bg-white/10 text-slate-100'
                       : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-slate-200')
                   }
                 >
@@ -286,7 +288,7 @@ export default function CreateElection() {
           <button
             type="button"
             onClick={addCandidate}
-            className="mt-2 text-sm font-semibold text-shadow-purple hover:underline"
+            className="mt-2 text-sm font-semibold text-white hover:underline"
           >
             + Add candidate
           </button>
@@ -350,5 +352,6 @@ export default function CreateElection() {
         </p>
       </motion.form>
     </div>
+    </PageShell>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import { faucetUrl } from '../lib/faucet';
+import { formatDust } from '../lib/format';
 
 /**
  * Live DUST balance chip.
@@ -21,10 +22,6 @@ import { faucetUrl } from '../lib/faucet';
  */
 
 const POLL_MS = 20_000;
-
-function format(dust: bigint): string {
-  return dust.toLocaleString();
-}
 
 export default function DustBalance() {
   const { api, connected, networkId } = useWallet();
@@ -81,10 +78,10 @@ export default function DustBalance() {
   return (
     <span
       className="hidden items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 sm:flex"
-      title={`${format(dust)} DUST available to pay transaction fees`}
+      title={`${formatDust(dust)} DUST available to pay transaction fees (${dust.toLocaleString()} SPECK)`}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-      {format(dust)} DUST
+      {formatDust(dust)} DUST
     </span>
   );
 }

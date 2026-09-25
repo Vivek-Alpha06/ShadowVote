@@ -28,7 +28,7 @@ const icons: Record<ToastKind, string> = { success: '✓', error: '✕', info: '
 const styles: Record<ToastKind, string> = {
   success: 'border-emerald-400/40 text-emerald-200',
   error: 'border-rose-400/40 text-rose-200',
-  info: 'border-shadow-blue/40 text-blue-200',
+  info: 'border-white/20 text-blue-200',
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {

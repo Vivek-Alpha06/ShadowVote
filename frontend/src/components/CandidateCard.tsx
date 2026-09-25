@@ -34,19 +34,19 @@ export default function CandidateCard({ candidate, selected, disabled, onSelect 
       aria-pressed={selected}
       className={`flex min-h-[4rem] w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-0 ${
         selected
-          ? 'border-shadow-purple bg-shadow-purple/10 shadow-glow'
+          ? 'border-white/40 bg-white/[0.07] shadow-glow'
           : 'border-white/10 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]'
       }`}
     >
       <span
         className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition-colors ${
-          selected ? 'border-shadow-purple' : 'border-slate-500'
+          selected ? 'border-white/40' : 'border-slate-500'
         }`}
         aria-hidden
       >
-        {selected && <span className="h-3 w-3 rounded-full bg-shadow-purple" />}
+        {selected && <span className="h-3 w-3 rounded-full bg-white" />}
       </span>
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-shadow-purple/30 to-shadow-blue/30 text-lg font-bold text-slate-100">
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-white/20 to-white/5 text-lg font-bold text-slate-100">
         {candidate.name.charAt(0).toUpperCase()}
       </span>
       {/* break-words, not truncate: a long name must stay readable rather than

@@ -26,7 +26,7 @@ export default function TxLog() {
       <h3 className="mb-3 flex items-center gap-2 font-bold text-slate-100">
         ⛓ On-chain transactions
         <span className="text-sm font-normal text-slate-500">({txLog.length})</span>
-        <Link to="/history" className="ml-auto text-xs font-semibold text-shadow-purple hover:underline">
+        <Link to="/history" className="ml-auto text-xs font-semibold text-white hover:underline">
           Full history →
         </Link>
       </h3>
@@ -38,7 +38,7 @@ export default function TxLog() {
           >
             <div className="min-w-0">
               <p className="text-sm font-semibold text-slate-200">{tx.action}</p>
-              <p className="break-all font-mono text-xs text-shadow-cyan">{tx.hash}</p>
+              <p className="break-all font-mono text-xs text-zinc-300">{tx.hash}</p>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-slate-500">{formatDate(tx.at)}</span>
@@ -47,14 +47,14 @@ export default function TxLog() {
                   href={explorerTxUrl(tx.hash, networkId)!}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-semibold text-shadow-cyan hover:underline"
+                  className="text-xs font-semibold text-zinc-300 hover:underline"
                 >
                   verify ↗
                 </a>
               )}
               <button
                 onClick={() => navigator.clipboard?.writeText(tx.hash)}
-                className="text-xs font-semibold text-shadow-purple hover:underline"
+                className="text-xs font-semibold text-white hover:underline"
               >
                 copy
               </button>

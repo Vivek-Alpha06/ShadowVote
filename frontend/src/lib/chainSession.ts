@@ -20,8 +20,16 @@ import { logStep } from './activityLog';
 const loadProviders = () => import('./midnightProviders');
 const loadChain = () => import('./shadowvoteChain');
 
-/** Remembered so a reload rejoins the same contract instead of redeploying. */
+/**
+ * Remembered so a reload rejoins the same contract instead of redeploying.
+ *
+ * Keyed BY NETWORK. A bare key was a bug once the app could switch networks:
+ * the address saved while on preview was then handed to a join on preprod,
+ * where it cannot exist, and `findDeployedContract` simply never returns — so
+ * switching network looked like a 90-second hang ending in a timeout.
+ */
 const LS_CONTRACT_ADDRESS = 'shadowvote:contract-address';
+const contractKey = (network: string) => `${LS_CONTRACT_ADDRESS}:${network}`;
 
 /**
  * The ShadowVote deployments this build ships against, keyed by network.
@@ -31,27 +39,28 @@ const LS_CONTRACT_ADDRESS = 'shadowvote:contract-address';
  * anything worked. See `contractForNetwork` for why this is a map.
  */
 const CONTRACTS: Record<string, string> = {
-  // ⚠️ UNVERIFIED — this address does not currently resolve on preprod.
+  // ✅ VERIFIED on preview, 2026-09-25, against the indexer itself:
+  //   POST https://indexer.preview.midnight.network/api/v4/graphql
+  //   { contractAction(address: "8e60d089…c143d") { __typename address } }
+  //   -> { "__typename": "ContractCall", "address": "8e60d089…c143d" }
+  // `ContractCall` (not just `ContractDeploy`) means the contract has been
+  // deployed AND called, i.e. this is the live one users have been voting on.
   //
-  // Checked directly against the preprod indexer:
-  //   contractAction(address: "8e60d089…c143d")  ->  null
-  // while a contract taken from a recent preprod block returns a ContractCall
-  // from the same query, so the query shape is right and the null is real.
-  // contract/deploy.log records the deploy failing with
-  // "expected instance of LedgerParameters" and EXIT_CODE=1, so this address
-  // was most likely never the result of a successful deploy.
+  // The same query against indexer.preprod returns null, so this address exists
+  // on preview ONLY. It was listed under `preprod` for a while, which is why
+  // preprod wallets saw an app with no elections and no error: they were joining
+  // an address that had never existed on their chain.
   //
-  // Keeping the entry so the join path stays exercised and the failure is
-  // visible rather than silent. Replace it with the address printed by a
-  // SUCCESSFUL `npm --workspace contract run deploy`.
-  //
-  // Note it was previously listed under `preview` as well, which cannot be
-  // true: a contract exists only on the network it was deployed to.
-  //
-  // Do NOT trust the block explorer to verify this. Both
+  // Do NOT trust the block explorer to verify an address. Both
   // explorer.preprod and explorer.preview return HTTP 200 with a byte-identical
-  // SPA shell for any address, so a 200 there means nothing. Query the indexer.
-  preprod: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
+  // SPA shell for any address at all, so a 200 there means nothing. Query the
+  // indexer, which answers about state rather than about routing.
+  preview: '8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d',
+
+  // preprod: pending. `npm --workspace contract run deploy` with
+  // MN_NETWORK_ID=preprod prints the address; paste it here. Until then the
+  // switcher still offers preprod (see SELECTABLE_NETWORKS) and says plainly
+  // that nothing is deployed there yet, which beats hiding the option.
 };
 
 /** Networks this build ships a contract for. */
@@ -115,12 +124,54 @@ function emit(): void {
   listeners.forEach((fn) => fn());
 }
 
-export function savedContractAddress(): string | null {
-  return localStorage.getItem(LS_CONTRACT_ADDRESS);
+/**
+ * The address this browser last used ON THIS NETWORK, if any.
+ *
+ * Also migrates the pre-network-switcher key, which held one address with no
+ * record of where it came from. The only evidence of its network is the last
+ * one the wallet connected on, so it is filed there and nowhere else — guessing
+ * wrong would resurrect exactly the cross-network hang the keying prevents.
+ */
+export function savedContractAddress(network: string | null | undefined): string | null {
+  migrateLegacyAddress();
+  if (!network) return null;
+  return localStorage.getItem(contractKey(network));
 }
 
-export function forgetContract(): void {
+function migrateLegacyAddress(): void {
+  const legacy = localStorage.getItem(LS_CONTRACT_ADDRESS);
+  if (!legacy) return;
   localStorage.removeItem(LS_CONTRACT_ADDRESS);
+
+  // Written by useWallet on every successful connect.
+  const lastNetwork = localStorage.getItem('shadowvote:wallet:network');
+  if (lastNetwork && !localStorage.getItem(contractKey(lastNetwork))) {
+    localStorage.setItem(contractKey(lastNetwork), legacy);
+  }
+}
+
+/** Drop the remembered address for one network, or for all of them. */
+export function forgetContract(network?: string): void {
+  if (network) {
+    localStorage.removeItem(contractKey(network));
+  } else {
+    localStorage.removeItem(LS_CONTRACT_ADDRESS);
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(`${LS_CONTRACT_ADDRESS}:`)) localStorage.removeItem(key);
+    }
+  }
+  session = null;
+  emit();
+}
+
+/**
+ * Drop the live session without touching what is remembered.
+ *
+ * Switching network has to do this: the session's providers, private state and
+ * contract all belong to the old chain, so anything read through them after the
+ * switch would be from the wrong network.
+ */
+export function closeSession(): void {
   session = null;
   emit();
 }
@@ -262,9 +313,11 @@ async function openSessionInner({
   //
   // The network comes from `info.config.networkId`, i.e. the wallet's own
   // getConfiguration() — never a guess.
-  const shipped = contractForNetwork(info.config.networkId);
+  const network = info.config.networkId;
+  const shipped = contractForNetwork(network);
   const target =
-    contractAddress ?? (forceDeploy ? undefined : (savedContractAddress() ?? shipped ?? undefined));
+    contractAddress ??
+    (forceDeploy ? undefined : (savedContractAddress(network) ?? shipped ?? undefined));
 
   // No contract for this network and no explicit deploy request. Falling through
   // would DEPLOY a fresh contract and charge a fee the user never asked for, so
@@ -314,7 +367,7 @@ async function openSessionInner({
     if (!deployed) throw new Error('Deploy succeeded but no contract address was returned.');
     address = deployed;
     deployTxHash = txHashOf(contract) ?? submittedTxHashes[0] ?? null;
-    localStorage.setItem(LS_CONTRACT_ADDRESS, address);
+    localStorage.setItem(contractKey(network), address);
   }
 
   onStep?.('Loading private state…');
@@ -324,7 +377,7 @@ async function openSessionInner({
   onProviderProgress(null);
 
   session = { providers, info, api, contract, contractAddress: address, deployTxHash, secretKey };
-  localStorage.setItem(LS_CONTRACT_ADDRESS, address);
+  localStorage.setItem(contractKey(network), address);
   emit();
   return session;
 }

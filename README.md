@@ -55,6 +55,46 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 
 ---
 
+## 📸 Screenshots & Submission Proofs
+
+### 1. Landing Page
+The entry point: the privacy guarantee stated plainly, with the Compact circuit that
+enforces it shown rather than described.
+
+<img src="./screenshots/landing.png" alt="ShadowVote landing page — Vote Privately. Verify Publicly." width="900" />
+
+### 2. Elections Dashboard
+Every election on one contract, filterable by status and type. Readable with no
+wallet connected — public auditing costs nothing.
+
+<img src="./screenshots/dashboard.png" alt="Elections dashboard listing active and ended elections" width="900" />
+
+### 3. Creating an Election
+Name, description, candidate set, type and voting window. The organizer is recorded
+as a key *commitment*, never as a wallet address.
+
+<img src="./screenshots/create.png" alt="Election creation form" width="900" />
+
+### 4. Casting a Private Ballot
+The proof is generated locally in the browser. The candidate choice never leaves the
+device — only a zero-knowledge proof that the choice was valid does.
+
+<img src="./screenshots/confirmation.png" alt="Vote confirmation after a private ballot is cast" width="900" />
+
+### 5. Results — Sealed Until Close
+Tallies stay hidden while voting is open and publish automatically the moment the
+deadline passes, which removes the bandwagon effect from live on-chain counts.
+
+<img src="./screenshots/result.png" alt="Election results with per-candidate tallies" width="900" />
+
+### 6. On-Chain Transaction History & Explorer Verification
+Every transaction this wallet submitted, each with a **Verify on explorer ↗** link.
+A privacy product that asks you to take its word for things has missed the point.
+
+<img src="./screenshots/history.png" alt="Transaction history with explorer verification links" width="900" />
+
+---
+
 ## 🚀 Key Features
 
 *   **Many Elections, One Contract:** A single deployed contract manages an unbounded number of elections, each with its own metadata, candidate set, deadline and independent tally.
@@ -65,22 +105,6 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 *   **Explorer Verification Built Into the UI:** Every transaction in the **History** view carries a **Verify on explorer ↗** link. A privacy product that asks you to take its word for things has missed the point.
 *   **Free Public Auditing:** Elections, tallies and results are readable with no wallet connected at all.
 *   **Election Types:** Election, survey, poll, referendum and governance presets, with filtering by *Active* / *Ended*.
-
----
-
-## 📸 Screenshots & Submission Proofs
-
-### 1. Landing Page & Live Preprod Application
-<img src="./screenshots/Dashboard.png" alt="Elections dashboard" width="500" /> 
-
-### 2. Elections Dashboard & Creating a Vote
-<img src="./screenshots/Vote_creation.png" alt="Election creation" width="440" />
-
-### 3. Signing With Lace & Successful Private Vote
-<img src="./screenshots/confirm_by_Lace.png" alt="Confirming in the Lace wallet" width="440" /> <img src="./screenshots/Vote_Successfully.png" alt="Vote cast successfully" width="440" />
-
-### 4. On-Chain Transaction History & Explorer Verification
-<img src="./screenshots/History_Tx.png" alt="Transaction history with explorer links" width="900" />
 
 ---
 

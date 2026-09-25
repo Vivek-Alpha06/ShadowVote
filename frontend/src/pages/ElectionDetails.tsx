@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
+import { PageShell } from '../components/Motion';
 import type { Election } from '../types';
 import Spinner from '../components/Spinner';
 import StatusBadge from '../components/StatusBadge';
@@ -119,6 +120,7 @@ export default function ElectionDetails() {
     selected !== null ? election.candidates.find((c) => c.index === selected) ?? null : null;
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link to="/dashboard" className="text-sm text-slate-400 hover:text-slate-200">
         ← All elections
@@ -221,5 +223,6 @@ export default function ElectionDetails() {
         onClose={closeVoteModal}
       />
     </div>
+    </PageShell>
   );
 }

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useWallet, WALLET_INSTALL_URL } from '../hooks/useWallet';
+import { useWallet, WALLET_INSTALL_URL, NETWORK_LABELS } from '../hooks/useWallet';
+import NetworkSwitch from '../components/NetworkSwitch';
+import { SHOW_NETWORK_SWITCH, NETWORK_LABEL_OVERRIDE } from '../lib/networkPreference';
 
-const features = [
+const featuresFor = (network: string) => [
   {
     icon: (
       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,17 +42,17 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ),
-    badge: 'Preprod Testnet',
+    badge: `${network} Testnet`,
     title: 'Serverless On-Chain Execution',
     body: 'State and computation live entirely on Midnight. No central backend, no API keys to revoke, and zero third-party telemetry.',
   },
 ];
 
-const stats = [
+const statsFor = (network: string) => [
   { value: '100%', label: 'Voter Confidentiality' },
   { value: '0', label: 'Central Database Dependencies' },
   { value: '< 2s', label: 'Local ZK-Proof Generation' },
-  { value: 'Preprod', label: 'Live Network Verified' },
+  { value: network, label: 'Live Network Verified' },
 ];
 
 const codeSnippet = `// ShadowVote.compact — Zero-Knowledge Nullifier Verification
@@ -74,8 +76,13 @@ export circuit castVote(
 }`;
 
 export default function Landing() {
-  const { connected, connecting, connect, error } = useWallet();
+  const { connected, connecting, connect, error, selectedNetwork } = useWallet();
   const [copiedCode, setCopiedCode] = useState(false);
+
+  // One place feeds the hero badge, stats strip, feature card and bottom CTA.
+  const network = NETWORK_LABEL_OVERRIDE ?? NETWORK_LABELS[selectedNetwork] ?? selectedNetwork;
+  const features = featuresFor(network);
+  const stats = statsFor(network);
 
   const copyCode = () => {
     navigator.clipboard.writeText(codeSnippet);
@@ -139,7 +146,7 @@ export default function Landing() {
         <div className="relative z-10 inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-zinc-800 bg-zinc-900/90 backdrop-blur-xl mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           <span className="text-xs font-medium tracking-wider text-zinc-300 uppercase">
-            Midnight Preprod Network
+            Midnight {network} Network
           </span>
         </div>
 
@@ -197,6 +204,19 @@ export default function Landing() {
             @shadow_vote
           </a>
         </motion.div>
+
+        {/* Network switcher — hidden while SHOW_NETWORK_SWITCH is false. The
+            wrapper is gated too, so no empty spacer is left in the hero. */}
+        {SHOW_NETWORK_SWITCH && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="relative z-10 mt-8"
+          >
+            <NetworkSwitch />
+          </motion.div>
+        )}
 
         {error && (
           <p className="mt-4 text-xs text-zinc-400">
@@ -340,7 +360,7 @@ export default function Landing() {
             Deploy or Join a Private Election
           </h2>
           <p className="mt-2 text-zinc-400 text-sm max-w-md mx-auto">
-            Experience zero-knowledge voting directly on Midnight Preprod.
+            Experience zero-knowledge voting directly on Midnight {network}.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link to="/create" className="btn-primary">

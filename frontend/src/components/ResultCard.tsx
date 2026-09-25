@@ -14,7 +14,7 @@ export default function ResultCard({ result, total, isWinner, rank }: Props) {
   return (
     <div
       className={`rounded-2xl border p-4 ${
-        isWinner ? 'border-shadow-purple/50 bg-shadow-purple/5' : 'border-white/10 bg-white/[0.02]'
+        isWinner ? 'border-white/30 bg-white/[0.04]' : 'border-white/10 bg-white/[0.02]'
       }`}
     >
       <div className="mb-2 flex items-center justify-between">
@@ -24,7 +24,7 @@ export default function ResultCard({ result, total, isWinner, rank }: Props) {
           </span>
           <span className="font-semibold text-slate-100">{result.name}</span>
           {isWinner && (
-            <span className="rounded-full bg-shadow-purple/20 px-2 py-0.5 text-xs font-bold text-shadow-violet">
+            <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-bold text-zinc-200">
               🏆 Winner
             </span>
           )}
@@ -37,7 +37,7 @@ export default function ResultCard({ result, total, isWinner, rank }: Props) {
         <motion.div
           className={`h-full rounded-full ${
             isWinner
-              ? 'bg-gradient-to-r from-shadow-purple to-shadow-blue'
+              ? 'bg-gradient-to-r from-white to-zinc-500'
               : 'bg-white/20'
           }`}
           initial={{ width: 0 }}

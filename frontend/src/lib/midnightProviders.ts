@@ -20,6 +20,7 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { setNetworkId, getNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex } from '@midnight-ntwrk/midnight-js-utils';
 import { logStep, timed } from './activityLog';
+import { formatDust } from './format';
 import { ShadowVoteZkConfigProvider, verifyZkAssets } from './zkConfig';
 import { browserPrivateStateProvider } from './browserPrivateStateProvider';
 import { FAUCET_DOCS_URL } from './faucet';
@@ -413,7 +414,7 @@ export async function assertCanPayFees(api: ConnectedAPI): Promise<void> {
         'You hold NIGHT, but fees are paid in DUST, which NIGHT generates only ' +
         'after you register it. In Lace, register your NIGHT for DUST generation, ' +
         'then wait for DUST to accrue and try again.\n\n' +
-        `(DUST balance 0, generation cap ${funds.dustCap})`
+        `(DUST balance 0, generation cap ${formatDust(funds.dustCap)} DUST)`
       : 'This wallet has no funds on this network.\n\n' +
         'Get tNIGHT from the faucet for the connected account, register it for ' +
         'DUST generation in Lace, then retry.\n\n' +

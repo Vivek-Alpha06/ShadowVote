@@ -37,7 +37,14 @@ import {
   type DiscoveredWallet,
   type WalletHandle,
 } from '../lib/midnightConnector';
-import { supportedNetworks } from '../lib/chainSession';
+import { closeSession, supportedNetworks } from '../lib/chainSession';
+import {
+  SELECTABLE_NETWORKS,
+  hasExplicitPreference,
+  preferredNetwork,
+  setPreferredNetwork,
+  subscribeNetwork,
+} from '../lib/networkPreference';
 
 export { NETWORK_LABELS };
 
@@ -81,6 +88,17 @@ interface WalletState {
   diagnostics: WalletDiagnostics;
   /** Networks the user can force, when auto-detection picks wrong. */
   networkOptions: readonly string[];
+  /**
+   * The network the user has CHOSEN to use — the one the next connect() asks
+   * for. Distinct from `networkId`, which is what the wallet reports it is
+   * actually on; the two differ while a switch is pending, and permanently if
+   * the wallet refuses the choice.
+   */
+  selectedNetwork: string;
+  /** Networks the switcher offers. */
+  selectableNetworks: readonly string[];
+  /** Choose a network, tearing down anything bound to the old one. */
+  switchNetwork: (networkId: string) => void;
   connect: (wallet?: DiscoveredWallet, networkId?: string) => Promise<void>;
   /** Reload the page and connect immediately — recovers a dead MV3 channel. */
   reloadAndConnect: (networkId?: string) => void;
@@ -133,16 +151,20 @@ function sameDiagnostics(a: WalletDiagnostics, b: WalletDiagnostics): boolean {
 function chosenNetwork(forced?: string): string {
   if (forced) return forced;
 
+  // An explicit choice from the network switcher outranks everything. The user
+  // saying "preview" has to beat both a remembered network and our default, or
+  // the switcher would silently not work.
+  if (hasExplicitPreference()) return preferredNetwork();
+
   // A network remembered by an older build can be one this build ships no
-  // contract for — most of all `preview`, which used to be the default. That
-  // case does not fail loudly: the wallet connects fine and the app then shows
-  // an empty election list with no error, which reads as "the product is
-  // broken". Ignore a remembered network we cannot actually serve.
+  // contract for. That case does not fail loudly: the wallet connects fine and
+  // the app then shows an empty election list with no error, which reads as
+  // "the product is broken". Ignore a remembered network we cannot serve.
   const remembered = localStorage.getItem(LS_NETWORK);
   if (remembered && supportedNetworks().includes(remembered)) return remembered;
   if (remembered) localStorage.removeItem(LS_NETWORK);
 
-  return NETWORK_IDS[0];
+  return preferredNetwork();
 }
 
 export function WalletProvider({ children }: { children: ReactNode }) {
@@ -159,6 +181,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   // Starts as our best-known list; replaced by the wallet's own list the first
   // time it rejects an id, since that is authoritative.
   const [networkOptions, setNetworkOptions] = useState<readonly string[]>(NETWORK_IDS);
+  // The user's choice. Mirrored into state so the switcher re-renders; the
+  // localStorage value stays the source of truth, since chosenNetwork() runs
+  // outside React.
+  const [selectedNetwork, setSelectedNetwork] = useState<string>(() => preferredNetwork());
 
   const handleRef = useRef<WalletHandle | null>(null);
   /** Non-null while an attempt is in flight; also the cancellation token. */
@@ -171,6 +197,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setDetecting(true);
     setRescanNonce((n) => n + 1);
   }, []);
+
+  useEffect(() => subscribeNetwork(() => setSelectedNetwork(preferredNetwork())), []);
 
   // --- keep scanning for injected wallets ----------------------------------
   useEffect(() => {
@@ -332,6 +360,41 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     window.location.reload();
   }, []);
 
+  /**
+   * Choose a different network.
+   *
+   * Everything bound to the old chain has to go: the chain session holds
+   * providers, private state and a contract that only exist there, and a
+   * remembered "last network that worked" would otherwise pull the next
+   * auto-connect straight back to the network the user just left.
+   *
+   * When a wallet is already connected this goes through reloadAndConnect
+   * rather than calling connect() again. Asking a live connector for a second
+   * network is what kills Lace's message channel, after which nothing works
+   * until a reload — so we reload deliberately, on our terms, instead of
+   * discovering it the hard way.
+   */
+  const switchNetwork = useCallback(
+    (next: string) => {
+      if (next === preferredNetwork() && (!networkId || next === networkId)) return;
+
+      setPreferredNetwork(next);
+      setSelectedNetwork(next);
+      closeSession();
+      localStorage.removeItem(LS_NETWORK);
+
+      if (handleRef.current || address) {
+        reloadAndConnect(next);
+        return;
+      }
+      // Not connected: nothing to tear down, and the next connect() will read
+      // the new preference on its own.
+      cancel();
+      setError(null);
+    },
+    [address, networkId, reloadAndConnect, cancel],
+  );
+
   // --- connect as soon as a wallet appears, when asked to ------------------
   const triedAutoRef = useRef(false);
   useEffect(() => {
@@ -388,6 +451,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       error,
       diagnostics,
       networkOptions,
+      selectedNetwork,
+      selectableNetworks: SELECTABLE_NETWORKS,
+      switchNetwork,
       connect,
       reloadAndConnect,
       cancel,
@@ -407,6 +473,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       error,
       diagnostics,
       networkOptions,
+      selectedNetwork,
+      switchNetwork,
       connect,
       reloadAndConnect,
       cancel,

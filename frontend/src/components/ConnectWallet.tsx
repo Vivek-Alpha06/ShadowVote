@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useWallet, WALLET_INSTALL_URL, NETWORK_LABELS } from '../hooks/useWallet';
 import { faucetUrl } from '../lib/faucet';
 import { runDiagnostic } from '../lib/midnightConnector';
+import { NETWORK_LABEL_OVERRIDE } from '../lib/networkPreference';
 
 /**
  * Inline connect panel. The Connect button is ALWAYS offered, an in-flight
@@ -83,7 +84,7 @@ export default function ConnectWallet({ title }: { title?: string }) {
           href={faucetUrl(networkId)}
           target="_blank"
           rel="noreferrer noopener"
-          className="font-semibold text-shadow-violet underline-offset-2 hover:underline"
+          className="font-semibold text-zinc-200 underline-offset-2 hover:underline"
         >
           Get test tokens ↗
         </a>
@@ -165,7 +166,7 @@ function NetworkOverride() {
           <button
             key={n}
             onClick={() => reloadAndConnect(n)}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 hover:border-shadow-purple/40 hover:text-white"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 hover:border-white/25 hover:text-white"
             title={`reload, then connect("${n}")`}
           >
             {NETWORK_LABELS[n] ?? n}{' '}
@@ -231,9 +232,9 @@ function FullDiagnostic() {
       <button
         onClick={run}
         disabled={running}
-        className="text-xs font-semibold text-shadow-purple hover:underline disabled:opacity-50"
+        className="text-xs font-semibold text-white hover:underline disabled:opacity-50"
       >
-        {running ? 'Running diagnostic…' : `▶ Run full diagnostic (${network})`}
+        {running ? 'Running diagnostic…' : `▶ Run full diagnostic (${NETWORK_LABEL_OVERRIDE ?? network})`}
       </button>
 
       {report && (
@@ -250,7 +251,7 @@ function FullDiagnostic() {
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             }}
-            className="mt-1 text-xs font-semibold text-shadow-purple hover:underline"
+            className="mt-1 text-xs font-semibold text-white hover:underline"
           >
             {copied ? '✓ Copied' : 'Copy report'}
           </button>
@@ -335,14 +336,14 @@ export function WalletDiagnosticsPanel() {
             <button
               onClick={rescan}
               disabled={detecting}
-              className="text-xs font-semibold text-shadow-purple hover:underline disabled:opacity-50"
+              className="text-xs font-semibold text-white hover:underline disabled:opacity-50"
             >
               {detecting ? 'Scanning…' : 'Scan again'}
             </button>
             <span className="mx-2 text-slate-600">·</span>
             <button
               onClick={() => window.location.reload()}
-              className="text-xs font-semibold text-shadow-purple hover:underline"
+              className="text-xs font-semibold text-white hover:underline"
             >
               Reload page
             </button>

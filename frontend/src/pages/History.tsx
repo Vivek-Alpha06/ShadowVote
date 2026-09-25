@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useWallet } from '../hooks/useWallet';
+import { NETWORK_LABEL_OVERRIDE } from '../lib/networkPreference';
+import { PageShell, PageHeader, Reveal } from '../components/Motion';
 import ConnectWallet from '../components/ConnectWallet';
 import { getSession, subscribe } from '../lib/chainSession';
 import { readTxHistory, subscribeTxHistory, clearTxHistory, type TxRecord } from '../lib/txHistory';
@@ -42,16 +43,19 @@ export default function History() {
   }
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Transaction history</h1>
-          <p className="mt-1 text-slate-400">
+      <PageHeader
+        eyebrow="Verifiable record"
+        title="Transaction history"
+        subtitle={
+          <>
             Every transaction this wallet has submitted. Each one is a public, verifiable record on
-            the {network ?? 'Midnight'} chain.
-          </p>
-        </div>
-        {records.length > 0 && (
+            the {NETWORK_LABEL_OVERRIDE ?? network ?? 'Midnight'} chain.
+          </>
+        }
+        actions={
+          records.length > 0 ? (
           <button
             onClick={() => {
               clearTxHistory(wallet);
@@ -61,9 +65,10 @@ export default function History() {
             title="Removes the local list only — the transactions stay on-chain forever"
           >
             Clear local list
-          </button>
-        )}
-      </div>
+            </button>
+          ) : null
+        }
+      />
 
       {/*
         Only warn once we actually KNOW the network. Before the session resolves,
@@ -73,7 +78,8 @@ export default function History() {
       */}
       {network && !hasExplorer && records.length > 0 && (
         <p className="mt-4 rounded-lg border border-amber-400/25 bg-amber-400/10 p-3 text-sm text-amber-200">
-          No block explorer is known for <strong>{network}</strong>, so the verify links are hidden.
+          No block explorer is known for <strong>{NETWORK_LABEL_OVERRIDE ?? network}</strong>, so the
+          verify links are hidden.
           The hashes below are still real — you can look them up through the indexer.
         </p>
       )}
@@ -89,23 +95,22 @@ export default function History() {
           </Link>
         </div>
       ) : (
-        <ul className="mt-8 space-y-3">
+        <div className="mt-8 space-y-3">
           {records.map((tx, i) => {
             const url = explorerTxUrl(tx.hash, tx.networkId ?? network);
             return (
-              <motion.li
+              <Reveal
                 key={tx.hash}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                className="glass p-4"
+                index={Math.min(i, 8)}
+                inView
+                className="glass glass-hover p-4"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="font-semibold text-slate-100">{tx.action}</p>
                   <span className="text-xs text-slate-500">{formatDate(tx.at)}</span>
                 </div>
 
-                <p className="mt-2 break-all font-mono text-xs text-shadow-cyan">{tx.hash}</p>
+                <p className="mt-2 break-all font-mono text-xs text-zinc-300">{tx.hash}</p>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {url && (
@@ -132,14 +137,11 @@ export default function History() {
                       View election #{tx.electionId}
                     </Link>
                   )}
-                  {tx.networkId && (
-                    <span className="ml-auto text-xs text-slate-500">{tx.networkId}</span>
-                  )}
                 </div>
-              </motion.li>
+              </Reveal>
             );
           })}
-        </ul>
+        </div>
       )}
 
       <p className="mt-8 text-center text-xs text-slate-500">
@@ -147,5 +149,6 @@ export default function History() {
         transactions, which are permanent on-chain.
       </p>
     </div>
+    </PageShell>
   );
 }

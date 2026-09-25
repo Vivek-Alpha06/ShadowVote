@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getSession, subscribe, contractForNetwork } from '../lib/chainSession';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet, NETWORK_LABELS } from '../hooks/useWallet';
 import { shortAddress } from '../lib/format';
+import { NETWORK_LABEL_OVERRIDE } from '../lib/networkPreference';
 
 export default function Footer() {
-  const { networkId } = useWallet();
+  const { networkId, selectedNetwork } = useWallet();
   const [session, setSession] = useState(getSession());
 
   useEffect(() => subscribe(() => setSession(getSession())), []);
@@ -40,7 +41,7 @@ export default function Footer() {
             @shadow_vote
           </a>
           <span className="text-zinc-800">•</span>
-          <span>Midnight Preprod</span>
+          <span>Midnight {NETWORK_LABEL_OVERRIDE ?? NETWORK_LABELS[network ?? selectedNetwork] ?? selectedNetwork}</span>
           <span className="text-zinc-800">•</span>
           <span>MIT License</span>
         </div>

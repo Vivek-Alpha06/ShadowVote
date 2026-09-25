@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
 import type { Election } from '../types';
 import Spinner from '../components/Spinner';
+import { PageShell, PageHeader } from '../components/Motion';
 import StatusBadge from '../components/StatusBadge';
 import Timer from '../components/Timer';
 import { formatDate } from '../lib/format';
@@ -32,13 +33,14 @@ export default function ResultsOverview() {
   );
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight">Results</h1>
-        <p className="mt-1 text-slate-400">
-          Tallies are sealed while voting is open and published automatically the moment an
-          election's time limit runs out.
-        </p>
+        <PageHeader
+          eyebrow="Sealed until close"
+          title="Results"
+          subtitle="Tallies are sealed while voting is open and published automatically the moment an election's time limit runs out."
+        />
       </div>
 
       {loading ? (
@@ -76,6 +78,7 @@ export default function ResultsOverview() {
         </div>
       )}
     </div>
+    </PageShell>
   );
 }
 
@@ -138,7 +141,7 @@ function Section({
                   <span className="text-xs text-slate-500">
                     {e.totalVotes} vote{e.totalVotes === 1 ? '' : 's'} cast
                   </span>
-                  <span className="text-sm font-semibold text-shadow-purple">
+                  <span className="text-sm font-semibold text-white">
                     {revealed ? 'View results →' : 'View status →'}
                   </span>
                 </div>

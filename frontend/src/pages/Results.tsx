@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
+import { PageShell } from '../components/Motion';
 import type { Election, ElectionResults } from '../types';
 import Spinner from '../components/Spinner';
 import ResultCard from '../components/ResultCard';
@@ -68,6 +69,7 @@ export default function Results() {
   const ranked = results.results ? [...results.results].sort((a, b) => b.votes - a.votes) : [];
 
   return (
+    <PageShell>
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link to="/results" className="text-sm text-slate-400 hover:text-slate-200">
         ← All results
@@ -192,5 +194,6 @@ export default function Results() {
         </p>
       </div>
     </div>
+    </PageShell>
   );
 }

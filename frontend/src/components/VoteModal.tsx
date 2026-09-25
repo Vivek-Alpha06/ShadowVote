@@ -36,7 +36,7 @@ function StageList({ stage }: { stage: TxStage | null }) {
             key={s}
             className={`flex items-start gap-3 rounded-xl border p-2.5 transition-colors ${
               active
-                ? 'border-shadow-purple/40 bg-shadow-purple/10'
+                ? 'border-white/25 bg-white/[0.07]'
                 : 'border-transparent bg-transparent'
             }`}
           >
@@ -44,7 +44,7 @@ function StageList({ stage }: { stage: TxStage | null }) {
               {done ? (
                 <span className="text-sm text-emerald-400">✓</span>
               ) : active ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-shadow-purple border-t-transparent" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-transparent" />
               ) : (
                 <span className="h-2 w-2 rounded-full bg-slate-600" />
               )}
@@ -101,7 +101,7 @@ export default function VoteModal({
               className={`mb-4 grid h-12 w-12 place-items-center rounded-2xl text-2xl ${
                 failed
                   ? 'bg-rose-500/20'
-                  : 'bg-gradient-to-br from-shadow-purple to-shadow-blue shadow-glow'
+                  : 'bg-gradient-to-br from-white to-zinc-500 shadow-glow'
               }`}
             >
               {failed ? '⚠️' : '🔒'}
@@ -113,7 +113,7 @@ export default function VoteModal({
 
             <p className="mt-2 text-sm text-slate-400">
               You are voting for{' '}
-              <span className="font-semibold text-shadow-violet">{candidate.name}</span>.
+              <span className="font-semibold text-zinc-200">{candidate.name}</span>.
               {failed ? (
                 <> Your choice is still selected — you can try again without starting over.</>
               ) : (
@@ -132,8 +132,8 @@ export default function VoteModal({
               and never rendered anywhere an observer could reach.
             */}
             {!submitting && !failed && (
-              <div className="mt-4 rounded-xl border border-shadow-purple/30 bg-shadow-purple/10 p-3">
-                <p className="flex items-center gap-2 text-sm font-semibold text-shadow-violet">
+              <div className="mt-4 rounded-xl border border-white/20 bg-white/[0.07] p-3">
+                <p className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
                   <span aria-hidden>🛡️</span>
                   Proved without revealing your input
                 </p>

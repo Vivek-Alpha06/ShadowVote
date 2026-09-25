@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import WalletButton from './WalletButton';
 import Logo from './Logo';
+import NetworkSwitch from './NetworkSwitch';
+import { SHOW_NETWORK_SWITCH } from '../lib/networkPreference';
 
 const links = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -18,10 +20,15 @@ export default function Navbar() {
           <Link to="/" className="transition-transform hover:scale-105">
             <Logo size={38} />
           </Link>
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            Preprod
-          </div>
+          {/* This was a static "Preprod" badge. It sat next to the logo telling
+              every visitor the same thing whatever network they were on — so
+              once the network became a choice, the honest move was to make the
+              badge the control itself rather than a label that could lie. */}
+          {SHOW_NETWORK_SWITCH && (
+            <div className="hidden sm:block">
+              <NetworkSwitch compact />
+            </div>
+          )}
         </div>
 
         <nav className="hidden items-center gap-1 sm:flex bg-zinc-950 border border-zinc-900 p-1 rounded-lg">
