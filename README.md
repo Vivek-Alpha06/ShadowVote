@@ -66,7 +66,14 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 
 ## 📸 Screenshots & Submission Proofs
 
-### 1. Landing Page Evolution (Old vs New)
+### 1. Modernized Landing Page (v2.0 OVO Credix Aesthetic)
+The entry point: cryptographic zero-knowledge governance stated with clarity, client RAM witness simulation, interactive 3D perspective dashboard showcase, and live network metrics.
+
+<img src="./screenshots/New_Landing.png" alt="ShadowVote Modernized Landing Page — Vote Privately. Verify Publicly." width="900" />
+
+---
+
+### 2. UI Evolution: Legacy MVP vs Modernized v2.0 Interface
 
 <table>
   <thead>
@@ -112,12 +119,14 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
   </tbody>
 </table>
 
-### 2. Elections Dashboard & Hub
+---
+
+### 3. Elections Dashboard & Hub
 Every election on one contract, filterable by status and category with real-time participation metrics. Readable with no wallet connected — public auditing costs nothing.
 
 <img src="./screenshots/new_ui.png" alt="New ShadowVote Elections Hub with Live Category Filters and Stats" width="900" />
 
-### 3. Creating an Election
+### 4. Creating an Election
 Configure custom name, description, category, multi-candidate set, and voting duration window with live preview. The organizer is recorded as a key *commitment*, never as a wallet address.
 
 <img src="./screenshots/new_ballot.png" alt="New Create Ballot Form with Dynamic Category Selector and Live Preview" width="900" />
@@ -126,7 +135,7 @@ Creating an election is a real on-chain transaction, signed in Lace. The prompt 
 
 <img src="./screenshots/confirmation.png" alt="Lace wallet prompt showing the createElection transaction being signed" width="900" />
 
-### 4. Casting a Private Ballot
+### 5. Casting a Private Ballot
 The proof is generated locally in the browser. The candidate choice never leaves the device — only a zero-knowledge proof that the choice was valid does.
 
 <table>
@@ -148,12 +157,12 @@ The proof is generated locally in the browser. The candidate choice never leaves
 
 The middle step is the whole product in one frame: *Generating zero-knowledge proof* runs on the voter's own machine, so the candidate never reaches the network — only a proof that some valid candidate was chosen.
 
-### 5. Results — Sealed Until Close & Decrypted Podiums
+### 6. Results — Sealed Until Close & Decrypted Podiums
 Tallies stay hidden while voting is open and publish automatically the moment the deadline passes, which removes the bandwagon effect from live on-chain counts.
 
 <img src="./screenshots/New_result.png" alt="New Election Results and Tallies with Decrypted Winner Badges" width="900" />
 
-### 6. On-Chain Transaction History & Explorer Verification
+### 7. On-Chain Transaction History & Explorer Verification
 Every transaction this wallet submitted, each with a **Verify on explorer ↗** link. A privacy product that asks you to take its word for things has missed the point.
 
 <img src="./screenshots/history.png" alt="Transaction history with explorer verification links" width="900" />
