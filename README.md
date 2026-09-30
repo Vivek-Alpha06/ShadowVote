@@ -131,31 +131,10 @@ Configure custom name, description, category, multi-candidate set, and voting du
 
 <img src="./screenshots/new_ballot.png" alt="New Create Ballot Form with Dynamic Category Selector and Live Preview" width="900" />
 
-Creating an election is a real on-chain transaction, signed in Lace. The prompt shows the call it is authorising — `entry_point: createElection` against the deployed contract — so the wallet is never asked to sign something opaque.
+### 5. Casting a Private Ballot & Shielded Voting
+The proof is generated locally in the browser RAM. The candidate choice never leaves the device — only a zero-knowledge proof that the choice was valid and an unlinkable nullifier reach the network.
 
-<img src="./screenshots/confirmation.png" alt="Lace wallet prompt showing the createElection transaction being signed" width="900" />
-
-### 5. Casting a Private Ballot
-The proof is generated locally in the browser. The candidate choice never leaves the device — only a zero-knowledge proof that the choice was valid does.
-
-<table>
-<tr>
-<td width="33%" valign="top">
-<img src="./screenshots/voting.png" alt="Selecting a candidate on an open election" width="100%" />
-<p align="center"><b>1 · Choose</b><br/><sub>Pick a candidate. Nothing is sent yet.</sub></p>
-</td>
-<td width="33%" valign="top">
-<img src="./screenshots/voting_process.png" alt="Zero-knowledge proof being generated and submitted" width="100%" />
-<p align="center"><b>2 · Prove &amp; submit</b><br/><sub>Balance checked, ZK proof built on device, signed, broadcast.</sub></p>
-</td>
-<td width="33%" valign="top">
-<img src="./screenshots/vote_done.png" alt="Election page confirming the ballot was counted" width="100%" />
-<p align="center"><b>3 · Counted</b><br/><sub>Turnout rises to 1. The choice itself stays private.</sub></p>
-</td>
-</tr>
-</table>
-
-The middle step is the whole product in one frame: *Generating zero-knowledge proof* runs on the voter's own machine, so the candidate never reaches the network — only a proof that some valid candidate was chosen.
+<img src="./screenshots/new_election.png" alt="New Confidential Election Details and Shielded Voting Interface" width="900" />
 
 ### 6. Results — Sealed Until Close & Decrypted Podiums
 Tallies stay hidden while voting is open and publish automatically the moment the deadline passes, which removes the bandwagon effect from live on-chain counts.
@@ -165,7 +144,7 @@ Tallies stay hidden while voting is open and publish automatically the moment th
 ### 7. On-Chain Transaction History & Explorer Verification
 Every transaction this wallet submitted, each with a **Verify on explorer ↗** link. A privacy product that asks you to take its word for things has missed the point.
 
-<img src="./screenshots/history.png" alt="Transaction history with explorer verification links" width="900" />
+<img src="./screenshots/new_history.png" alt="New Transaction History and Audit Log with Explorer Verification Links" width="900" />
 
 ---
 
