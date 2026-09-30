@@ -65,7 +65,7 @@ hackathon alumni groups, ZK study groups.
   a post with motion pulls meaningfully more testers than a link alone.
 - Tag `#Midnight` `#ZK` `#privacy`, and quote-post it into any Midnight
   challenge thread.
-- Pin it on [@shadow_vote](https://x.com/shadow_vote) for the duration.
+- Pin it on [@shadow_vote](https://x.com/shadow_vote) for the duration — [View Live Post on X](https://x.com/shadow_vote/status/2105342604753944793?s=46).
 
 ---
 

@@ -7,6 +7,7 @@
     <a href="https://github.com/Vivek-Alpha06/ShadowVote/actions"><img src="https://img.shields.io/badge/contract%20tests-6%20passing-brightgreen" alt="6 contract tests passing" /></a>
     <a href="./USERS.md"><img src="https://img.shields.io/badge/preview%20users-80%20verified-brightgreen" alt="80 verified Preview users" /></a>
     <a href="https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252"><img src="https://img.shields.io/badge/user%20rating-3.92%2F5-green" alt="3.92 out of 5 average user rating" /></a>
+    <a href="https://x.com/shadow_vote/status/2105342604753944793?s=46"><img src="https://img.shields.io/badge/X%20(Twitter)-Launch%20Post-1DA1F2?logo=x&logoColor=white" alt="X Announcement Post" /></a>
     <a href="#-verified-midnight-preview-contract"><img src="https://img.shields.io/badge/network-Midnight%20Preview-8b5cf6" alt="Midnight Preview" /></a>
     <a href="./contract/src/ShadowVote.compact"><img src="https://img.shields.io/badge/Compact-0.23%20%2F%20compiler%200.31.1-22d3ee" alt="Compact 0.23" /></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT licence" /></a>
@@ -45,7 +46,7 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 | 🌕 **Level 6 Preview Users** | [LAUNCH_USERS.md](./LAUNCH_USERS.md) | **30 / 30** launch cohort — **80 unique Preview users** across both |
 | 📖 **User Guide** | [docs/USAGE.md](./docs/USAGE.md) | Plain-English walkthrough — Getting Started on Preview, Your First Transaction |
 | 📣 **Outreach & Onboarding Kit** | [docs/OUTREACH.md](./docs/OUTREACH.md) | Discord/X/DM copy, 16-step onboarding script, demo video checklist |
-| 🐤 **Product X (Twitter) Profile** | [@shadow_vote](https://x.com/shadow_vote) | Launch posts, demo clips, and tester call-outs |
+| 🐤 **Product X (Twitter)** | [@shadow_vote](https://x.com/shadow_vote) · [🚀 Launch Post](https://x.com/shadow_vote/status/2105342604753944793?s=46) | Official profile & live launch announcement post |
 | 🎨 **Brand Assets & Brief** | [logo/](./logo/) · [docs/BRAND.md](./docs/BRAND.md) | Primary mark, banner and minimal mark, plus tagline, key messages, palette and X bio |
 | 📜 **Product Proposal** | [PROPOSAL.md](./PROPOSAL.md) | Product thesis, data model, and the known gaps stated plainly |
 | ⚙️ **CI/CD Pipeline** | [View live workflow runs](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml) | Two-job GitHub Actions pipeline on every push — contract (Compact compile, ZK asset verification, 6 Vitest specs) and frontend (type-check + Vite build) |
@@ -311,7 +312,7 @@ The banner at the top of this README is the primary lockup; the marks below are 
 rest of the system.
 
 * **Tagline:** *Vote Privately. Verify Publicly.*
-* **X Profile:** [@shadow_vote](https://x.com/shadow_vote)
+* **X Profile & Announcement:** [@shadow_vote](https://x.com/shadow_vote) · [🚀 Live Launch Post](https://x.com/shadow_vote/status/2105342604753944793?s=46)
 * **Palette:** monochrome greyscale ink with a single Signal Violet `#8B5CF6` accent — full system in [`docs/BRAND.md`](./docs/BRAND.md).
 
 **Brand assets**
@@ -344,7 +345,7 @@ rest of the system.
 | 🌕 **Level 6 Preview Users** | 20 | 🟢 **30 / 30** | [`LAUNCH_USERS.md`](./LAUNCH_USERS.md) |
 | 🧮 **Total Unique Preview Users** | 70 | 🟢 **80** | 80 addresses, 80 unique, zero overlap |
 | 🛠️ **Improvements From Feedback** | Linked changes | 🟢 **14 shipped** | Improvement table above, each with a commit |
-| 🐤 **Product X Profile** | Live account | 🟢 Live | [@shadow_vote](https://x.com/shadow_vote) |
+| 🐤 **Product X Profile & Post** | Live account & tweet | 🟢 Live | [@shadow_vote](https://x.com/shadow_vote) · [Launch Post](https://x.com/shadow_vote/status/2105342604753944793?s=46) |
 | 🎨 **Brand Assets** | Logo / banner / bio | 🟢 **Logo, banner, favicon, brief** | [`logo/`](./logo/) · [`docs/BRAND.md`](./docs/BRAND.md) |
 
 > 🟡 rows are open work, not claims. They are listed here rather than omitted, because a status table that only shows green is not a status table.
