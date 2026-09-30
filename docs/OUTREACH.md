@@ -1,11 +1,11 @@
 # Outreach & Onboarding
 
-Copy-paste material for recruiting and onboarding real Preprod testers.
+Copy-paste material for recruiting and onboarding real Preview testers.
 
 - **Live demo:** https://shadow-vote-frontend-one.vercel.app/
 - **Feedback form:** https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform
 - **X profile:** https://x.com/shadow_vote
-- **Preprod contract:** `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
+- **Preview contract:** `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
 - **Rosters to fill:** [../USERS.md](../USERS.md) · [../LAUNCH_USERS.md](../LAUNCH_USERS.md)
 
 One rule for all of it: **never promise a reward for an address.** Paid
@@ -22,10 +22,10 @@ reviewer can tell the difference. Ask for a test and a complaint instead.
 > verifiable, but nobody can see *how* you voted. Not the organizer, not me,
 > not anyone reading the chain.
 >
-> Live on Preprod: https://shadow-vote-frontend-one.vercel.app/
+> Live on Preview: https://shadow-vote-frontend-one.vercel.app/
 >
 > To try it (~3 min):
-> 1. Point Lace at Preprod, faucet some tNIGHT, register it for DUST
+> 1. Point Lace at Preview, faucet some tNIGHT, register it for DUST
 > 2. Open an election and vote — the ZK proof builds in your browser
 > 3. **History → Verify on explorer** shows your transaction on-chain
 >
@@ -49,7 +49,7 @@ hackathon alumni groups, ZK study groups.
 
 *276 characters — fits in a single post without Premium.*
 
-> ShadowVote is live on @MidnightNtwrk Preprod 🌒
+> ShadowVote is live on @MidnightNtwrk Preview 🌒
 >
 > Secret ballots on a public chain: the result is verifiable, your vote is not
 > traceable to you.
@@ -57,7 +57,7 @@ hackathon alumni groups, ZK study groups.
 > Connect Lace, vote, verify on the explorer:
 > https://shadow-vote-frontend-one.vercel.app/
 >
-> Testing? Reply with your Preprod address 👇
+> Testing? Reply with your Preview address 👇
 
 **Posting notes**
 
@@ -75,17 +75,17 @@ hackathon alumni groups, ZK study groups.
 >
 > **ShadowVote** runs elections where the count is public but individual votes
 > are mathematically unlinkable to the voter. It is a zero-knowledge dApp on
-> Midnight's Preprod testnet, and it is live:
+> Midnight's Preview testnet, and it is live:
 > https://shadow-vote-frontend-one.vercel.app/
 >
 > Would you give it ~5 minutes? Install the Lace wallet extension, switch it to
-> Preprod, grab free test tokens, and cast one vote. Walkthrough here if you
+> Preview, grab free test tokens, and cast one vote. Walkthrough here if you
 > get stuck:
 > https://github.com/Vivek-Alpha06/ShadowVote/blob/main/docs/USAGE.md
 >
 > Two things I would love back:
 >
-> 1. Your Preprod wallet address (`mn_addr_…`) so I can log you as a verified
+> 1. Your Preview wallet address (`mn_addr_…`) so I can log you as a verified
 >    tester — it is a test wallet with no real funds, and it only ever proves
 >    you participated, never who you voted for.
 > 2. The one moment where you thought *"wait, what do I do now?"* — that is the
@@ -113,7 +113,7 @@ where the feedback comes from.
 1. Install the **Lace** wallet extension (Midnight-enabled build) in Chrome or
    any Chromium browser.
 2. Create a new wallet and save the recovery phrase somewhere safe.
-3. Open Lace's network setting and switch it to **Preprod**. This matters: a
+3. Open Lace's network setting and switch it to **Preview**. This matters: a
    contract only exists on the network it was deployed to, so a wallet on the
    wrong network sees an empty app.
 
@@ -151,16 +151,16 @@ where the feedback comes from.
 
 ### Step 4 — Confirm your wallet address
 
-14. Copy your Preprod address from Lace and send it back to me, with the
+14. Copy your Preview address from Lace and send it back to me, with the
     transaction link from step 13 if you have it.
 15. I add you to `LAUNCH_USERS.md` in the public repo. To be explicit about
     what that means:
     - It records that your wallet **participated**.
     - It cannot record **how you voted** — that link is never written down,
       on-chain or off.
-    - It is a Preprod test wallet; nothing of value is exposed.
+    - It is a Preview test wallet; nothing of value is exposed.
 16. Last ask: fill the 60-second feedback form —
-    https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform
+    https://docs.google.com/forms/d/e/1FAIpQLSctS_l95umhLp0aXhV-IwQVx-Yz3bxO5Uo-8qUTXgVW5wvIYg/viewform
     — or just reply with the one point where the flow confused you. Every entry
     in `docs/FEEDBACK.md` came from someone answering that question.
 
@@ -173,12 +173,12 @@ every item below is something a reviewer is looking for.
 
 **Open on proof, not on marketing**
 
-- [ ] Show the **Preprod contract address** on screen, large and readable:
+- [ ] Show the **Preview contract address** on screen, large and readable:
       `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
 - [ ] Show that same address in the app footer *and* on
-      `explorer.preprod.midnight.network`, side by side, so the deployment is
+      `explorer.preview.midnight.network`, side by side, so the deployment is
       independently visible rather than merely claimed.
-- [ ] Show Lace's network selector reading **Preprod**.
+- [ ] Show Lace's network selector reading **Preview**.
 - [ ] State the one-line pitch: public result, private ballot.
 
 **Full product flow, unedited**
@@ -212,7 +212,7 @@ every item below is something a reviewer is looking for.
 
 **Close**
 
-- [ ] Scroll `USERS.md` / `LAUNCH_USERS.md` — real Preprod testers.
+- [ ] Scroll `USERS.md` / `LAUNCH_USERS.md` — real Preview testers.
 - [ ] Show `docs/FEEDBACK.md`, naming one change that shipped because a user
       asked for it.
 - [ ] End with the demo URL and the contract address on screen together.

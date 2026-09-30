@@ -10,7 +10,7 @@ the result.
 | | |
 |---|---|
 | **A browser** | Chrome or a Chromium browser |
-| **The Lace wallet** | The Midnight-enabled extension, set to the **Preprod** network |
+| **The Lace wallet** | The Midnight-enabled extension, set to the **Preview** network |
 | **tNIGHT** | Free test tokens from the Midnight faucet |
 | **DUST** | Generated from your tNIGHT — see step 2, this is the step people miss |
 
@@ -18,7 +18,7 @@ There is no account to create and no email to give. Your wallet is your login.
 
 ---
 
-## Getting Started on Preprod
+## Getting Started on Preview
 
 The short version, for anyone who just wants to get in. Each point expands
 into a full step further down.
@@ -26,20 +26,20 @@ into a full step further down.
 | | What to do | Costs anything? |
 |---|---|---|
 | 1 | Install **Lace** (the Midnight-enabled build) in Chrome. | No |
-| 2 | Switch Lace's network to **Preprod**. | No |
+| 2 | Switch Lace's network to **Preview**. | No |
 | 3 | Copy your **unshielded** address (`mn_addr_…`) and faucet some **tNIGHT**. | No — test tokens, no real value |
 | 4 | In Lace, **register your NIGHT for DUST generation**, then wait a few minutes. | No |
 | 5 | Open the [live demo](https://shadow-vote-frontend-one.vercel.app/) and click **Connect Wallet**. | No |
 | 6 | Vote in an election. | A small DUST fee |
 
-**Why Preprod, and why it matters.** A contract only exists on the network it
-was deployed to. ShadowVote lives on Preprod at
+**Why Preview, and why it matters.** A contract only exists on the network it
+was deployed to. ShadowVote lives on Preview at
 `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`, so a wallet
 pointed at any other network will load the app and show you nothing at all —
 no error, just an empty list. If the Elections page looks bare, check the
 network selector in Lace first.
 
-**Preprod is a test network.** The tokens have no value, and nothing here
+**Preview is a test network.** The tokens have no value, and nothing here
 touches real money. Use a wallet you created for testing.
 
 **What is free and what is not.** Reading costs nothing: every election,
@@ -56,7 +56,7 @@ or closing one.
 
 Open the Midnight faucet and request tNIGHT for your wallet's **unshielded**
 address (it starts with `mn_addr_…`). Copy it from Lace while Lace is set to
-Preprod, so you are funding the address the app will actually use. These are
+Preview, so you are funding the address the app will actually use. These are
 test tokens with no real value.
 
 ### 2. Turn your tNIGHT into DUST
@@ -219,7 +219,7 @@ Register your NIGHT for DUST generation in Lace and wait for it to accrue. DUST
 fills gradually. Holding NIGHT alone pays no fees.
 
 **The app shows no elections**
-Check that Lace is on **Preprod**. A contract address only exists on the network
+Check that Lace is on **Preview**. A contract address only exists on the network
 it was deployed to, so a wallet on another network has nothing to read. This is
 the single most common cause of "the app looks broken".
 
@@ -247,7 +247,7 @@ that local work is exactly what keeps your choice private.
 ## Where This Guide Came From
 
 Most of the warnings above exist because a real tester hit that exact wall on
-Preprod and told us about it — the DUST step, the wrong-network empty screen,
+Preview and told us about it — the DUST step, the wrong-network empty screen,
 the wedged wallet connection, the "is the proof frozen?" pause.
 
 Every change this guide reflects is logged in

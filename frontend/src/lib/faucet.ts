@@ -29,9 +29,8 @@ export const FAUCET_DOCS_URL = 'https://docs.midnight.network/develop/tutorial/u
  * this map nor the UI.
  */
 const FAUCET_HOSTS: Record<string, string> = {
-  // Intentionally empty until each host is confirmed live. Every caller
-  // already degrades to FAUCET_DOCS_URL, so an empty map is correct
-  // behaviour, not a missing feature.
+  preview: 'https://faucet.preview.midnight.network',
+  preprod: 'https://faucet.preprod.midnight.network',
 };
 
 /** Best available faucet URL for a network — never null. */

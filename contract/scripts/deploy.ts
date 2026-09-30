@@ -1,8 +1,38 @@
 // ShadowVote deploy script (Midnight testnet).
 // =============================================================================
-// This builds and submits the contract deployment transaction. The transaction
-// is SIGNED BY YOUR WALLET and pays the DUST fee — that step is intentionally
-// yours: nothing here can deploy without a funded testnet wallet seed.
+// ⛔ THIS SCRIPT CANNOT CURRENTLY REACH THE CHAIN. The blocker is in the SDK,
+// not in this file. Read this before spending time on it.
+//
+// `@midnight-ntwrk/wallet` 5.0.0 syncs by opening a GraphQL subscription named
+// `viewingUpdates`. That field NO LONGER EXISTS on the Midnight indexer. Checked
+// against preprod on 2026-09-25, both API versions:
+//
+//   POST https://indexer.preprod.midnight.network/api/v{3,4}/graphql
+//   { __schema { subscriptionType { fields { name } } } }
+//   -> blocks, contractActions, dustGenerations, dustLedgerEvents,
+//      dustNullifierTransactions, shieldedNullifierTransactions,
+//      shieldedTransactions, unshieldedTransactions, zswapLedgerEvents
+//
+// i.e. the DUST-era API replaced `viewingUpdates` with `shieldedTransactions`
+// and friends. So the wallet's indexer client fails its handshake, retries
+// forever, and logs `IndexerClientEvent$ConnectTimeout` — surfacing as a wall of
+//   "[] | Timed out trying to connect"
+// while `syncProgress` stays `undefined`. 5.0.0 is the NEWEST published version
+// (npm view @midnight-ntwrk/wallet versions ends at 5.0.0), so there is no
+// upgrade to apply. Endpoints, seed, funding and networking are all fine and
+// were each verified independently; none of them is the problem.
+//
+// This is also the true cause of the older "expected instance of
+// LedgerParameters" failures in deploy.log: the wallet learns ledger parameters
+// while syncing, and it never synced. The sync wait below turns that confusing
+// crash into an honest hang, which is how the real cause was finally found.
+//
+// HOW TO DEPLOY IN THE MEANTIME: use the app's own "Deploy a new contract"
+// button with Lace connected on the target network. Lace ships its own
+// up-to-date indexer client, which is why the live preview contract
+// (8e60d089…c143d) exists at all. Everything below is correct as far as it goes
+// and should work unchanged once a compatible wallet release lands.
+// =============================================================================
 //
 // Prerequisites (see contract/README notes):
 //   1. `npm run compile` has produced managed/shadowvote (JS + ZK keys).
@@ -18,13 +48,13 @@
 // compact-runtime 0.16.0, compact-js 2.5.1 (Effect-based CompiledContract).
 // =============================================================================
 
-import { firstValueFrom, filter, tap } from 'rxjs';
+import { firstValueFrom, filter } from 'rxjs';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import { NetworkId as ZswapNetworkId } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 
-const NETWORK_ID    = process.env.MN_NETWORK_ID    ?? 'preprod';
+const NETWORK_ID    = process.env.MN_NETWORK_ID    ?? 'preview';
 setNetworkId(NETWORK_ID);
 
 const toNetworkAddress = (bech32Str: string) => {
@@ -96,11 +126,54 @@ async function main() {
   );
   wallet.start();
 
-  console.log('Syncing wallet with Preprod indexer…');
-  await new Promise((r) => setTimeout(r, 6000));
-  const state = await firstValueFrom(wallet.state());
+  // WAIT FOR A REAL SYNC — not a sleep.
+  //
+  // This used to be `setTimeout(6000)` followed by whatever state happened to
+  // be available, and that is what made the earlier deploys fail with
+  //   "expected instance of LedgerParameters"
+  // from inside wallet.balanceTransaction. The wallet learns the chain's ledger
+  // parameters (fee schedule and friends) as part of syncing; ask it to balance
+  // before that lands and it calls Transaction.fees(undefined), which the wasm
+  // layer rejects with exactly that assertion. Six seconds was simply not long
+  // enough on preprod, and any fixed wait is a race.
+  //
+  // `syncProgress.synced` is the wallet's own answer to "have I caught up",
+  // so waiting on it is both correct and as fast as the chain allows.
+  console.log(`Syncing wallet with the ${NETWORK_ID} indexer — this can take a few minutes …`);
+  const state = await firstValueFrom(
+    wallet.state().pipe(
+      filter((s) => {
+        const p = s.syncProgress;
+        if (!p) return false;
+        const { applyGap, sourceGap } = p.lag as { applyGap: bigint; sourceGap: bigint };
+        if (!p.synced) {
+          console.log(`  syncing — ${sourceGap} blocks to fetch, ${applyGap} to apply`);
+        }
+        return p.synced;
+      }),
+    ),
+  );
+  console.log('Synced.');
   console.log('Wallet address:', state.address);
   console.log('Current balances:', JSON.stringify(state.balances));
+
+  // Nothing below can succeed without funds, and failing here names the reason
+  // instead of surfacing it as an opaque balancing error several steps later.
+  if (Object.keys(state.balances).length === 0) {
+    // Derive the faucet address by REBUILDING the bech32m payload under an
+    // `addr` type. A string replace on the HRP would leave the checksum
+    // describing the old one, and the result would not decode anywhere.
+    const cpk = MidnightBech32m.parse(state.coinPublicKey);
+    const faucetAddress = new MidnightBech32m('addr', NETWORK_ID, cpk.data).asString();
+    throw new Error(
+      [
+        `This wallet holds no funds on ${NETWORK_ID}, so it cannot pay the deploy fee.`,
+        '',
+        'Fund this address, wait for it to confirm, then re-run:',
+        `  ${faucetAddress}`,
+      ].join('\n'),
+    );
+  }
 
   // --- Providers -----------------------------------------------------------
   const providers = {
@@ -124,54 +197,42 @@ async function main() {
 
     // walletProvider + midnightProvider are backed by the wallet: it balances,
     // proves and submits, and exposes the ZSwap/encryption public keys.
-    // VERIFY: this wallet<->provider bridge couples wallet-api transaction types
-    // to the midnight-js-protocol types; confirm the method/return shapes against
-    // the official example for your installed wallet@5.x before a real run.
     walletProvider: {
       getCoinPublicKey: () => toNetworkAddress(state.coinPublicKey),
       getEncryptionPublicKey: () => toNetworkAddress(state.encryptionPublicKey),
+
+      /**
+       * Balance the transaction, then PROVE it.
+       *
+       * wallet@5 changed the shape of this step and the old code here did not
+       * follow: `balanceTransaction` no longer returns a transaction, it returns
+       * a PROVING RECIPE (`BalanceTransactionToProve | NothingToProve`). The
+       * previous version treated that recipe as if it were a transaction and
+       * bolted fake `identifiers()` and `serialize()` methods onto it — the
+       * latter returning 32 zero bytes — so even had balancing succeeded, what
+       * reached the chain would have been garbage.
+       *
+       * The real contract is three calls: balance -> prove -> submit.
+       */
       balanceTx: async (tx: any, _ttl?: Date) => {
-        const balanced: any = await wallet.balanceTransaction(tx, []);
-        if (balanced) {
-          if (!balanced.identifiers) {
-            const id = (balanced.transactionHash && balanced.transactionHash()) || '00'.repeat(32);
-            balanced.identifiers = () => [id];
-          }
-          if (typeof balanced.serialize !== 'function') {
-            balanced.serialize = () => new Uint8Array(32);
-          }
-        }
-        return balanced;
+        const recipe = await wallet.balanceTransaction(tx, []);
+        console.log(`  balanced; proving recipe: ${recipe.type}`);
+        const proven = await wallet.proveTransaction(recipe);
+        console.log('  proven');
+        return proven;
       },
     },
     midnightProvider: {
       submitTx: async (tx: any) => {
-        if (tx) {
-          if (!tx.identifiers) {
-            const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
-            tx.identifiers = () => [id];
-          } else if (typeof tx.identifiers === 'function') {
-            const orig = tx.identifiers.bind(tx);
-            tx.identifiers = () => {
-              const arr = orig();
-              if (!arr || arr.length === 0) {
-                const id = (tx.transactionHash && tx.transactionHash()) || '00'.repeat(32);
-                return [id];
-              }
-              return arr;
-            };
-          }
-          if (typeof tx.serialize !== 'function') {
-            tx.serialize = () => new Uint8Array(32);
-          }
-        }
-        return wallet.submitTransaction(tx);
+        const id = await wallet.submitTransaction(tx);
+        console.log('  submitted; transaction identifier:', id);
+        return id;
       },
     },
   } as any;
 
   // --- Deploy --------------------------------------------------------------
-  console.log('Deploying ShadowVote to testnet-02 …');
+  console.log(`Deploying ShadowVote to ${NETWORK_ID} — proving takes a while …`);
   const deployed = await deployContract(providers, {
     compiledContract,
     privateStateId: 'shadowVotePrivateState',
@@ -181,7 +242,7 @@ async function main() {
 
   const address = deployed.deployTxData.public.contractAddress;
   console.log('\n✅ Deployed. Contract address:', address);
-  console.log('   Explorer: https://explorer.testnet-02.midnight.network/');
+  console.log(`   Explorer: https://explorer.${NETWORK_ID}.midnight.network/contracts/${address}`);
   console.log('\nNext: paste this address into frontend/src/lib/contractService.ts');
 
   await wallet.close();

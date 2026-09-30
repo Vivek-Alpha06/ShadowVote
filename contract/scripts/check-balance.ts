@@ -3,16 +3,18 @@ import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import { NetworkId as ZswapNetworkId } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
-const NODE_URL      = 'https://rpc.preprod.midnight.network';
-const INDEXER_URL   = 'https://indexer.preprod.midnight.network/api/v3/graphql';
-const INDEXER_WS    = 'wss://indexer.preprod.midnight.network/api/v3/graphql/ws';
-const PROOF_SERVER  = 'http://127.0.0.1:6300';
+const NETWORK_ID    = process.env.MN_NETWORK_ID    ?? 'preview';
+const NODE_URL      = process.env.MN_NODE          ?? `https://rpc.${NETWORK_ID}.midnight.network`;
+const INDEXER_URL   = process.env.MN_INDEXER       ?? `https://indexer.${NETWORK_ID}.midnight.network/api/v4/graphql`;
+const INDEXER_WS    = process.env.MN_INDEXER_WS    ?? `wss://indexer.${NETWORK_ID}.midnight.network/api/v4/graphql/ws`;
+const PROOF_SERVER  = process.env.MN_PROOF_SERVER  ?? 'http://127.0.0.1:6300';
 
-const WALLET_SEED   = process.env.SHADOWVOTE_WALLET_SEED ?? 'cd942e30688335aa0586e32d964d7388fbf2e43cad00d81cd9439a8985256ba5';
+const WALLET_SEED   = process.env.SHADOWVOTE_WALLET_SEED;
 
 async function main() {
-  setNetworkId('preprod');
-  console.log('Building wallet from seed and syncing with the indexer on Preview …');
+  if (!WALLET_SEED) throw new Error('SHADOWVOTE_WALLET_SEED not set in .env');
+  setNetworkId(NETWORK_ID);
+  console.log(`Connecting wallet from seed and syncing with ${NETWORK_ID} indexer …`);
   
   const wallet = await WalletBuilder.buildFromSeed(
     INDEXER_URL,

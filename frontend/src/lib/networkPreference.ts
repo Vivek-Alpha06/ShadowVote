@@ -18,52 +18,26 @@ const LS_PREFERRED = 'shadowvote:network:preferred';
 
 /**
  * Is the network switcher shown in the UI?
- *
- * TEMPORARILY FALSE — hidden for a product recording, by request. Nothing else
- * is disabled: the preference store, the per-network contract map and the
- * wallet's network handling all stay exactly as they are, so flipping this back
- * to `true` restores the control with no other edit.
- *
- * While it is false, a previously SAVED choice is also ignored (see
- * `preferredNetwork`). Honouring a stored "preprod" with no way to change it
- * would strand the visitor on a network this build has no contract for, showing
- * an empty app and no means of recovery.
  */
-export const SHOW_NETWORK_SWITCH = false;
+export const SHOW_NETWORK_SWITCH = true;
 
 /**
  * Network name to display, overriding the one actually in use.
- *
- * TEMPORARILY SET — for a product recording, by request.
- *
- * ⚠️ THIS IS A LABEL ONLY. It changes no connection, no address and no
- * contract: the app still runs on whichever network the wallet reports, and
- * still joins the contract from CONTRACTS for that network. Today that means it
- * genuinely runs on `preview`, because that is the only network with a deployed
- * ShadowVote — so a visitor who connects a real pre-prod wallet will find no
- * contract, whatever this label says.
- *
- * Set to `null` to show the network actually in use. Do that as soon as the
- * recording is done, or once a contract exists on pre-prod.
+ * Set to null so the active network reported by the wallet/session is displayed.
  */
-export const NETWORK_LABEL_OVERRIDE: string | null = 'Preprod';
+export const NETWORK_LABEL_OVERRIDE: string | null = null;
 
 /**
  * Networks the switcher offers, best-supported first.
- *
- * Deliberately NOT derived from the deployment map: a network belongs here as
- * soon as we intend to support it, and the UI can then say "not deployed yet"
- * for one with no contract. Deriving it would make an undeployed network
- * unpickable, and an unpickable network cannot be diagnosed by the user.
  */
-export const SELECTABLE_NETWORKS = ['preprod', 'preview'] as const;
+export const SELECTABLE_NETWORKS = ['preview', 'preprod'] as const;
 
 export type SelectableNetwork = (typeof SELECTABLE_NETWORKS)[number];
 
 /** One line per network, shown under the switcher. */
 export const NETWORK_BLURBS: Record<string, string> = {
-  preprod: 'The pre-production testnet — the closest thing to mainnet conditions.',
-  preview: 'The older preview testnet. Kept live so existing elections stay reachable.',
+  preview: 'The Midnight Preview network — the primary testnet with verified contracts and active elections.',
+  preprod: 'The Midnight Preprod network.',
 };
 
 export function isSelectable(id: string | null | undefined): id is SelectableNetwork {

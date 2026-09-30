@@ -7,8 +7,7 @@
     "compile": "compact compile src/ShadowVote.compact managed/shadowvote",
     "test": "vitest run",
     "build": "npm run compile && tsc",
-    "deploy": "node --env-file=.env --loader ts-node/esm scripts/run-deploy.ts",
-    "batch-vote": "node --env-file=.env --loader ts-node/esm scripts/batch-vote.ts"
+    "deploy": "node --env-file=.env --loader ts-node/esm scripts/run-deploy.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "^2.5.1",
@@ -21,6 +20,7 @@
     "@midnight-ntwrk/midnight-js-node-zk-config-provider": "^4.1.1",
     "@midnight-ntwrk/midnight-js-types": "^4.1.1",
     "@midnight-ntwrk/wallet": "^5.0.0",
+    "@midnight-ntwrk/wallet-sdk": "^1.1.0",
     "@midnight-ntwrk/zswap": "^4.0.0",
     "rxjs": "^7.8.1"
   },

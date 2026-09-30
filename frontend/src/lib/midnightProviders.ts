@@ -262,6 +262,19 @@ export async function buildProviders(
   // prover keys and ZKIR per circuit.
   const zkConfigProvider = new ShadowVoteZkConfigProvider(ZK_CONFIG_BASE);
 
+  const networkId = config.networkId || 'preview';
+  // Blockfrost's GraphQL indexer proxy fails with Internal Server Error on
+  // contractAction.deploy.transaction.contractActions.state queries.
+  // Use the official Midnight network indexer to ensure reliable contract resolution.
+  const indexerUri = (!config.indexerUri || config.indexerUri.includes('blockfrost.io'))
+    ? `https://indexer.${networkId}.midnight.network/api/v4/graphql`
+    : config.indexerUri;
+  const indexerWsUri = (!config.indexerWsUri || config.indexerWsUri.includes('blockfrost.io'))
+    ? `wss://indexer.${networkId}.midnight.network/api/v4/graphql/ws`
+    : config.indexerWsUri;
+
+  logStep(`indexer in use: ${indexerUri}`);
+
   const providers = {
     privateStateProvider: browserPrivateStateProvider(),
     // Third arg is webSocketImpl. It defaults to `isomorphic-ws`, whose browser
@@ -270,8 +283,8 @@ export async function buildProviders(
     // deployContract waits on this subscription for finalization, so a broken
     // socket makes the deploy hang forever with no error.
     publicDataProvider: indexerPublicDataProvider(
-      config.indexerUri,
-      config.indexerWsUri,
+      indexerUri,
+      indexerWsUri,
       window.WebSocket as never,
     ),
     zkConfigProvider,

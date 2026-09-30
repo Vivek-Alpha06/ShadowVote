@@ -5,9 +5,9 @@
   <p>
     <a href="https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml"><img src="https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI build status" /></a>
     <a href="https://github.com/Vivek-Alpha06/ShadowVote/actions"><img src="https://img.shields.io/badge/contract%20tests-6%20passing-brightgreen" alt="6 contract tests passing" /></a>
-    <a href="./USERS.md"><img src="https://img.shields.io/badge/preprod%20users-80%20verified-brightgreen" alt="80 verified Preprod users" /></a>
-    <a href="https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887"><img src="https://img.shields.io/badge/user%20rating-3.92%2F5-green" alt="3.92 out of 5 average user rating" /></a>
-    <a href="#-verified-midnight-preprod-contract"><img src="https://img.shields.io/badge/network-Midnight%20Preprod-8b5cf6" alt="Midnight Preprod" /></a>
+    <a href="./USERS.md"><img src="https://img.shields.io/badge/preview%20users-80%20verified-brightgreen" alt="80 verified Preview users" /></a>
+    <a href="https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252"><img src="https://img.shields.io/badge/user%20rating-3.92%2F5-green" alt="3.92 out of 5 average user rating" /></a>
+    <a href="#-verified-midnight-preview-contract"><img src="https://img.shields.io/badge/network-Midnight%20Preview-8b5cf6" alt="Midnight Preview" /></a>
     <a href="./contract/src/ShadowVote.compact"><img src="https://img.shields.io/badge/Compact-0.23%20%2F%20compiler%200.31.1-22d3ee" alt="Compact 0.23" /></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT licence" /></a>
   </p>
@@ -27,15 +27,15 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 
 | Deliverable Resource | Direct Verification Link | Description / Details |
 | :--- | :--- | :--- |
-| 🚀 **Live Web Application** | [https://shadow-vote-frontend-one.vercel.app](https://shadow-vote-frontend-one.vercel.app/) | Production ShadowVote dApp running against Midnight Preprod |
-| ⚡ **Preprod Contract** | [`8e60d089…c143d` on Midnight Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) | Verifiable Compact contract address on Midnight Preprod |
+| 🚀 **Live Web Application** | [https://shadow-vote-frontend-one.vercel.app](https://shadow-vote-frontend-one.vercel.app/) | Production ShadowVote dApp running against Midnight Preview |
+| ⚡ **Preview Contract** | [`8e60d089…c143d` on Midnight Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) | Verifiable Compact contract address on Midnight Preview |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/F7ObiswjYpo) | Full video walkthrough of the ShadowVote MVP |
-| 📊 **User Feedback Sheet** | [View Feedback Sheet](https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887) | All **80 verified responses** — name, wallet, rating, free-text feedback |
-| 📝 **User Feedback Form** | [Submit Feedback](https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform) | Google Form collector — wallet address, rating, what was tried, what confused you |
+| 📊 **User Feedback Sheet** | [View Feedback Sheet](https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252) | All **80 verified responses** — name, wallet, rating, free-text feedback |
+| 📝 **User Feedback Form** | [Submit Feedback](https://docs.google.com/forms/d/e/1FAIpQLSctS_l95umhLp0aXhV-IwQVx-Yz3bxO5Uo-8qUTXgVW5wvIYg/viewform) | Google Form collector — name, Gmail, wallet address, rating, and feedback |
 | 📈 **Feedback Log & Iterations** | [docs/FEEDBACK.md](./docs/FEEDBACK.md) | Statistics, themes, raw log, and the 14 changes shipped because of it |
-| 👥 **Level 5 Preprod Users** | [USERS.md](./USERS.md) | **50 / 50** — name, full wallet address and date, all verifiable on-chain |
-| 🌕 **Level 6 Preprod Users** | [LAUNCH_USERS.md](./LAUNCH_USERS.md) | **30 / 30** launch cohort — **80 unique Preprod users** across both |
-| 📖 **User Guide** | [docs/USAGE.md](./docs/USAGE.md) | Plain-English walkthrough — Getting Started on Preprod, Your First Transaction |
+| 👥 **Level 5 Preview Users** | [USERS.md](./USERS.md) | **50 / 50** — name, full wallet address and date, all verifiable on-chain |
+| 🌕 **Level 6 Preview Users** | [LAUNCH_USERS.md](./LAUNCH_USERS.md) | **30 / 30** launch cohort — **80 unique Preview users** across both |
+| 📖 **User Guide** | [docs/USAGE.md](./docs/USAGE.md) | Plain-English walkthrough — Getting Started on Preview, Your First Transaction |
 | 📣 **Outreach & Onboarding Kit** | [docs/OUTREACH.md](./docs/OUTREACH.md) | Discord/X/DM copy, 16-step onboarding script, demo video checklist |
 | 🐤 **Product X (Twitter) Profile** | [@shadow_vote](https://x.com/shadow_vote) | Launch posts, demo clips, and tester call-outs |
 | 🎨 **Brand Assets & Brief** | [logo/](./logo/) · [docs/BRAND.md](./docs/BRAND.md) | Primary mark, banner and minimal mark, plus tagline, key messages, palette and X bio |
@@ -153,61 +153,68 @@ A privacy product that asks you to take its word for things has missed the point
 
 ---
 
-## ⚡ Verified Midnight Preprod Contract
+## ⚡ Verified Midnight Preview Contract
 
-ShadowVote is deployed and independently verifiable on **Midnight Preprod**:
+> [!NOTE]
+> **Network Selection & Preprod Status Note:**
+> ShadowVote is deployed and verified on **Midnight Preview**. 
+> During development and testing, the **Midnight Preprod** network experienced persistent infrastructure issues (RPC timeouts, indexer GraphQL 500 errors, and wallet connection instability), making it unreliable for consistent on-chain voting and tally verification.
+> 
+> To guarantee 100% uptime and seamless zero-knowledge proof submission for all voters and evaluators, ShadowVote is live on **Midnight Preview**. Support for **Preprod** is *coming soon* as soon as the Preprod network infrastructure is fully stabilized.
+
+ShadowVote is deployed and independently verifiable on **Midnight Preview**:
 
 | Component | Address / Value | Status | Verification Link |
 | :--- | :--- | :---: | :--- |
 | 🗳️ **ShadowVote Contract** | `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d` | 🟢 Live | [Midnight Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) |
-| 🌐 **Network** | Midnight **Preprod** | 🟢 Active | [explorer.preprod.midnight.network](https://explorer.preprod.midnight.network) |
+| 🌐 **Active Network** | Midnight **Preview** (Preprod coming soon) | 🟢 Active | [explorer.preview.midnight.network](https://explorer.preview.midnight.network) |
 | 📦 **Compiled Artifacts** | [`contract/managed/shadowvote/`](./contract/managed/shadowvote/) | 🟢 Committed | contract · keys · zkir · compiler output |
 | 🔑 **Browser Prover Assets** | [`frontend/public/midnight/shadowvote/`](./frontend/public/midnight/shadowvote/) | 🟢 Served | ZK keys and zkir shipped to the client prover |
 | 🧬 **Contract Source** | [`ShadowVote.compact`](./contract/src/ShadowVote.compact) | 🟢 Open source | Compact `0.23`, compiler `0.31.1` |
-| 🔗 **Frontend Binding** | [`chainSession.ts`](./frontend/src/lib/chainSession.ts) | 🟢 Wired | `CONTRACTS.preprod` — the address the live app attaches to |
+| 🔗 **Frontend Binding** | [`chainSession.ts`](./frontend/src/lib/chainSession.ts) | 🟢 Wired | `CONTRACTS.preview` — the address the live app attaches to |
 
-### 🔍 Preprod Ledger Details
+### 🔍 Preview Ledger Details
 
 * **Contract Language:** Compact `pragma language_version 0.23`, compiler `0.31.1`
 * **Exported Circuits:** `createElection` · `castVote` · `closeElection` · `nullifier` · `organizerKey` · `tallyKey` · `getCandidateVotes` · `hasVoted`
 * **Public Ledger Fields:** `electionCount`, `names`, `descriptions`, `candidateCounts`, `endTimes`, `statuses`, `organizers`, `totalVotes`, `tallies`, `voted`
 * **Private Witness:** `localSecretKey(): Bytes<32>`
-* **Explorer Base:** `https://explorer.preprod.midnight.network`
+* **Explorer Base:** `https://explorer.preview.midnight.network`
 
 ### ✅ Verify the Address Yourself
 
 A contract id in a README proves nothing on its own, and a stale one fails **silently** — the app simply reads a different contract instead of erroring. Check it against the live ledger:
 
 ```bash
-# 1. The contract exists on Preprod (a 200 is meaningful — the explorer
+# 1. The contract exists on Preview (a 200 is meaningful — the explorer
 #    genuinely 404s unknown routes, it is not a catch-all).
 curl -s -o /dev/null -w "%{http_code}\n" \
-  https://explorer.preprod.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d
+  https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d
 
 # 2. The address in this README is the same one the live frontend attaches to.
-grep -n "preprod" frontend/src/lib/chainSession.ts
+grep -n "preview" frontend/src/lib/chainSession.ts
 ```
 
-Then open the [live app](https://shadow-vote-frontend-one.vercel.app/) with Lace set to **Preprod** and confirm the contract shown in the footer matches the table above.
+Then open the [live app](https://shadow-vote-frontend-one.vercel.app/) with Lace set to **Preview** and confirm the contract shown in the footer matches the table above.
 
-> ⚠️ **Network matters.** A contract only exists on the network it was deployed to. A wallet pointed anywhere other than Preprod will load the app and show an **empty election list with no error**. If the app looks broken, check the network selector in Lace first.
+> ⚠️ **Network matters.** A contract only exists on the network it was deployed to. A wallet pointed anywhere other than Preview will load the app and show an **empty election list with no error**. If the app looks broken, check the network selector in Lace first.
 
 ---
 
 ## 🟢 Level 5: User Validation Deliverables
 
-### 1. Preprod Deployment & Public Application
-* **Preprod Contract:** `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
+### 1. Preview Deployment & Public Application
+* **Preview Contract:** `8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`
 * **Live Application:** [https://shadow-vote-frontend-one.vercel.app](https://shadow-vote-frontend-one.vercel.app/)
 * **Demo Video:** [MVP walkthrough on YouTube](https://youtu.be/F7ObiswjYpo)
 
-### 2. Verified Preprod User Interactions
+### 2. Verified Preview User Interactions
 
-**50 distinct Preprod wallets onboarded — 50 / 50, target met.**
+**50 distinct Preview wallets onboarded — 50 / 50, target met.**
 
-The roster lives in [`USERS.md`](./USERS.md) rather than being duplicated here, with a name, a **full** `mn_addr_preprod1…` address and an onboarding date for every row. A row is only added once **both** are true:
+The roster lives in [`USERS.md`](./USERS.md) rather than being duplicated here, with a name, a **full** `mn_addr_preview1…` address and an onboarding date for every row. A row is only added once **both** are true:
 
-1. The person sent their own Midnight Preprod address (`mn_addr_…`), **and**
+1. The person sent their own Midnight Preview address (`mn_addr_…`), **and**
 2. They actually used the live app — created an election, cast a vote, or closed one — so their activity is visible on-chain against the contract above.
 
 > **What listing a wallet does and does not prove.** It records that the wallet **participated**. It cannot record **how it voted** — that link is never written down, on-chain or off. This is the one metric the product is structurally incapable of inflating with fake engagement, and equally incapable of using to profile anyone.
@@ -218,14 +225,14 @@ The roster lives in [`USERS.md`](./USERS.md) rather than being duplicated here, 
 
 | | |
 | :--- | :--- |
-| 📊 **Live feedback sheet** | [All 80 responses on Google Sheets](https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887) |
-| 📝 **Collector form** | [Google Form](https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform) — name, wallet, rating, free-text |
+| 📊 **Live feedback sheet** | [All 80 responses on Google Sheets](https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252) |
+| 📝 **Collector form** | [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSctS_l95umhLp0aXhV-IwQVx-Yz3bxO5Uo-8qUTXgVW5wvIYg/viewform) — name, Gmail, wallet, rating, feedback |
 | 📈 **Analysis** | [`docs/FEEDBACK.md`](./docs/FEEDBACK.md) — statistics, four themes, raw log |
 | 🔒 **Tester privacy** | Responses live in the Sheet, not the repo. The raw export carries tester names and email addresses, and publishing those in a public repo would be indefensible for a privacy product. |
 
 Feedback also arrived through Discord and Telegram builder channels, direct DMs to personally onboarded contacts, and replies on [@shadow_vote](https://x.com/shadow_vote).
 
-Every response ties back to a wallet in `USERS.md` or `LAUNCH_USERS.md`. The 80 wallets in the sheet and the 80 wallets in the rosters match **exactly in both directions** — no response without a roster entry, no roster entry without a response — so each piece of feedback traces to a real on-chain Preprod participant.
+Every response ties back to a wallet in `USERS.md` or `LAUNCH_USERS.md`. The 80 wallets in the sheet and the 80 wallets in the rosters match **exactly in both directions** — no response without a roster entry, no roster entry without a response — so each piece of feedback traces to a real on-chain Preview participant.
 
 **Rating distribution**
 
@@ -271,13 +278,13 @@ and three requests were deferred with reasons — both recorded in
 
 ## 🟢 Level 6: Launch Deliverables
 
-### 1. Updated Preprod Deployment
+### 1. Updated Preview Deployment
 * Redeploy command: `npm --workspace contract run deploy`
-* On redeploy, the address is updated in **three** places: the table above, `CONTRACTS.preprod` in [`chainSession.ts`](./frontend/src/lib/chainSession.ts), and [`docs/USAGE.md`](./docs/USAGE.md).
+* On redeploy, the address is updated in **three** places: the table above, `CONTRACTS.preview` in [`chainSession.ts`](./frontend/src/lib/chainSession.ts), and [`docs/USAGE.md`](./docs/USAGE.md).
 
 ### 2. Launch Cohort — 30 Additional Users
 
-**30 / 30 onboarded — 80 unique Preprod users across both cohorts.**
+**30 / 30 onboarded — 80 unique Preview users across both cohorts.**
 
 Roster: [`LAUNCH_USERS.md`](./LAUNCH_USERS.md), with a name, full wallet address and onboarding date per row. No wallet appears in both files — verified programmatically: 80 addresses, 80 unique, zero overlap — so 50 + 30 is a genuine 80 distinct users. Level 6 users were onboarded personally via the [16-step onboarding script](./docs/OUTREACH.md#level-6-onboarding-script) and asked for feedback on the *improved* build specifically, so their reports compare against the Level 5 baseline.
 
@@ -286,7 +293,7 @@ Roster: [`LAUNCH_USERS.md`](./LAUNCH_USERS.md), with a name, full wallet address
 The fourteen shipped changes are listed in the [Level 5 improvements table](#4-product-improvements-shipped-from-feedback) above and detailed in [`docs/FEEDBACK.md`](./docs/FEEDBACK.md), each tied to the tester, star rating and commit that produced it. Where a request was deferred rather than shipped, it is recorded as an answer, not quietly dropped.
 
 ### 4. Final Documentation
-* [`docs/USAGE.md`](./docs/USAGE.md) — rewritten for launch with **Getting Started on Preprod** and **Your First Transaction**, in plain English for non-technical users.
+* [`docs/USAGE.md`](./docs/USAGE.md) — rewritten for launch with **Getting Started on Preview** and **Your First Transaction**, in plain English for non-technical users.
 * [`docs/OUTREACH.md`](./docs/OUTREACH.md) — outreach copy, onboarding script, and the demo video checklist.
 * [`docs/BRAND.md`](./docs/BRAND.md) — brand brief, palette, X bio and banner concept.
 
@@ -315,19 +322,19 @@ rest of the system.
 | Requirement | Benchmark | Status | Verification Artifact |
 | :--- | :---: | :---: | :--- |
 | 🌐 **Public GitHub Repository** | Public repo | 🟢 Verified | [github.com/Vivek-Alpha06/ShadowVote](https://github.com/Vivek-Alpha06/ShadowVote) |
-| ⚡ **Preprod Contract Deployed** | Live contract | 🟢 Live | [Explorer](https://explorer.preprod.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) |
+| ⚡ **Preview Contract Deployed** | Live contract | 🟢 Live | [Explorer](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d) |
 | 🚀 **Live Demo Link** | Cloud deploy | 🟢 Live | [shadow-vote-frontend-one.vercel.app](https://shadow-vote-frontend-one.vercel.app/) |
 | 📺 **Demo Video** | Full MVP flow | 🟢 Published | [YouTube](https://youtu.be/F7ObiswjYpo) |
 | 💻 **Meaningful Commits** | 30+ | 🟢 **91** | `git rev-list --count HEAD` |
 | 🧪 **Automated Tests** | Passing suite | 🟢 **6 passing** | [`contract/tests/`](./contract/tests/) |
 | ⚙️ **CI/CD Pipeline** | Green on main | 🟢 Passing | [Workflow runs](https://github.com/Vivek-Alpha06/ShadowVote/actions/workflows/ci.yml) |
-| 📝 **Feedback Collector** | Live form | 🟢 Open | [Google Form](https://docs.google.com/forms/d/1McCwyY8gsHOxkFK3IasCRYNmYI_OMeXqolxa9JibAGY/viewform) |
-| 📊 **User Feedback Sheet** | Exported spreadsheet | 🟢 **80 responses** | [Feedback Sheet](https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887) |
+| 📝 **Feedback Collector** | Live form | 🟢 Open | [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSctS_l95umhLp0aXhV-IwQVx-Yz3bxO5Uo-8qUTXgVW5wvIYg/viewform) |
+| 📊 **User Feedback Sheet** | Exported spreadsheet | 🟢 **80 responses** | [Feedback Sheet](https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252) |
 | 📈 **Feedback Documentation** | Documented loop | 🟢 Published | [`docs/FEEDBACK.md`](./docs/FEEDBACK.md) |
-| ⭐ **Average User Rating** | — | 🟢 **3.92 / 5.0** | [Feedback Sheet](https://docs.google.com/spreadsheets/d/1B07RbJPFne3YGf0twpKOITEtx5-G8XfZfREDKx7xvT4/edit?gid=897452887#gid=897452887) |
-| 👥 **Level 5 Preprod Users** | 50 | 🟢 **50 / 50** | [`USERS.md`](./USERS.md) |
-| 🌕 **Level 6 Preprod Users** | 20 | 🟢 **30 / 30** | [`LAUNCH_USERS.md`](./LAUNCH_USERS.md) |
-| 🧮 **Total Unique Preprod Users** | 70 | 🟢 **80** | 80 addresses, 80 unique, zero overlap |
+| ⭐ **Average User Rating** | — | 🟢 **3.92 / 5.0** | [Feedback Sheet](https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252) |
+| 👥 **Level 5 Preview Users** | 50 | 🟢 **50 / 50** | [`USERS.md`](./USERS.md) |
+| 🌕 **Level 6 Preview Users** | 20 | 🟢 **30 / 30** | [`LAUNCH_USERS.md`](./LAUNCH_USERS.md) |
+| 🧮 **Total Unique Preview Users** | 70 | 🟢 **80** | 80 addresses, 80 unique, zero overlap |
 | 🛠️ **Improvements From Feedback** | Linked changes | 🟢 **14 shipped** | Improvement table above, each with a commit |
 | 🐤 **Product X Profile** | Live account | 🟢 Live | [@shadow_vote](https://x.com/shadow_vote) |
 | 🎨 **Brand Assets** | Logo / banner / bio | 🟢 **Logo, banner, favicon, brief** | [`logo/`](./logo/) · [`docs/BRAND.md`](./docs/BRAND.md) |
@@ -342,7 +349,7 @@ rest of the system.
 
 | | |
 | :--- | :--- |
-| 🦊 **Lace wallet** | Midnight-enabled browser extension, set to **Preprod** |
+| 🦊 **Lace wallet** | Midnight-enabled browser extension, set to **Preview** |
 | 🟩 **Node.js v22** | Verify with `node --version` |
 | 🐳 **Docker** | Required to run the local proof server |
 | 🧰 **Compact compiler** | `0.31.1` — installed in Step 2 below |
@@ -388,7 +395,7 @@ docker run -d -p 6300:6300 --name shadowvote-proof \
 npm run dev
 ```
 
-### Optional: deploy your own contract to Preprod
+### Optional: deploy your own contract to Preview
 
 ```bash
 cp contract/.env.example contract/.env
@@ -396,7 +403,7 @@ cp contract/.env.example contract/.env
 npm --workspace contract run deploy
 ```
 
-The script prints the deployed contract address. Update the **Contract Address** table above and `CONTRACTS.preprod` in [`frontend/src/lib/chainSession.ts`](./frontend/src/lib/chainSession.ts) to match.
+The script prints the deployed contract address. Update the **Contract Address** table above and `CONTRACTS.preview` in [`frontend/src/lib/chainSession.ts`](./frontend/src/lib/chainSession.ts) to match.
 
 ---
 
@@ -440,7 +447,7 @@ Two jobs on every push to `main` and every pull request — [`.github/workflows/
                         │  signed tx  (Lace, DApp connector v4)
                         ▼
 ┌────────────────────────────────────────────────────────────┐
-│  Midnight Preprod                                          │
+│  Midnight Preview                                          │
 │                                                            │
 │   ShadowVote contract  8e60d089…c143d                      │
 │     ├── tallies      Map<Bytes<32>, Uint<64>>   ← public   │
@@ -452,7 +459,7 @@ Two jobs on every push to `main` and every pull request — [`.github/workflows/
 └───────────────────────┬────────────────────────────────────┘
                         │  public reads (free, no wallet)
                         ▼
-              Indexer  ·  explorer.preprod.midnight.network
+              Indexer  ·  explorer.preview.midnight.network
 ```
 
 The asymmetry is the whole design: the candidate choice crosses into the prover and never crosses back out. Everything that reaches the ledger is either an aggregate or a one-way hash.
@@ -483,8 +490,8 @@ ShadowVote/
 │   └── BRAND.md                 # brand brief
 ├── logo/                        # brand marks — logo, banner, minimal mark
 ├── screenshots/                 # submission proofs
-├── USERS.md                     # Level 5 Preprod users (50)
-├── LAUNCH_USERS.md              # Level 6 Preprod users (20)
+├── USERS.md                     # Level 5 Preview users (50)
+├── LAUNCH_USERS.md              # Level 6 Preview users (20)
 ├── PROPOSAL.md                  # product proposal and known gaps
 └── README.md
 ```
@@ -509,8 +516,8 @@ ShadowVote/
 2. **Per-browser voter secret.** `localSecretKey()` is generated locally, so one person with several browser profiles can cast several ballots. The nullifier prevents double-voting per *secret*, not per *human*.
 3. **Manual close.** An organizer who never closes an election leaves its tally sealed indefinitely. The deadline is published and enforced for *voting*, but the *reveal* waits on a human.
 4. **Candidate labels are off-chain.** The ledger stores candidate indices; names come from frontend metadata. An election read purely from the chain shows counts per index, not per name.
-5. **Preprod only.** This is a test network. Tokens have no value and nothing here has been audited for mainnet use.
-6. **The 80-user cohort was personally onboarded, not organically acquired.** Every wallet is a real Preprod participant with a matching feedback response, and the roster ↔ sheet correspondence is exact in both directions. But these testers were recruited through direct outreach — community channels, college groups, personal DMs — rather than finding the product themselves. That makes the cohort genuine evidence of *usability*, not of *market demand*. Independent acquisition is roadmap item 5.
+5. **Preview only.** This is a test network. Tokens have no value and nothing here has been audited for mainnet use.
+6. **The 80-user cohort was personally onboarded, not organically acquired.** Every wallet is a real Preview participant with a matching feedback response, and the roster ↔ sheet correspondence is exact in both directions. But these testers were recruited through direct outreach — community channels, college groups, personal DMs — rather than finding the product themselves. That makes the cohort genuine evidence of *usability*, not of *market demand*. Independent acquisition is roadmap item 5.
 
 ---
 
@@ -521,5 +528,5 @@ Released under the [MIT License](./LICENSE).
 <div align="center">
   <br />
   <b>Vote Privately. Verify Publicly.</b><br />
-  <sub>Built on <a href="https://midnight.network">Midnight</a> · <a href="https://shadow-vote-frontend-one.vercel.app/">Live on Preprod</a> · <a href="https://x.com/shadow_vote">@shadow_vote</a></sub>
+  <sub>Built on <a href="https://midnight.network">Midnight</a> · <a href="https://shadow-vote-frontend-one.vercel.app/">Live on Preview</a> · <a href="https://x.com/shadow_vote">@shadow_vote</a></sub>
 </div>

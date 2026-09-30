@@ -91,7 +91,7 @@ anything a user has to read.
 *129 characters.*
 
 > Secret ballots on a public chain. Vote privately, verify publicly —
-> zero-knowledge elections on @MidnightNtwrk. Live on Preprod 🌒
+> zero-knowledge elections on @MidnightNtwrk. Live on Preview 🌒
 
 Pinned post: the Level 6 launch post from
 [OUTREACH.md § b](OUTREACH.md#b-x-post), with the demo video attached.
@@ -122,7 +122,7 @@ the point.
 - **Right third:** a thin crescent moon arc in Signal Violet at maybe 40%
   opacity, bleeding off the right edge — the only colour in the frame, and the
   only nod to Midnight.
-- **Bottom right, small, in Muted:** `shadowvote · midnight preprod`.
+- **Bottom right, small, in Muted:** `shadowvote · midnight preview`.
 
 **What to avoid:** stock padlocks, hooded figures, "anonymous" masks, glowing
 blue circuit boards, and the word *ShadowVote* set in anything resembling a

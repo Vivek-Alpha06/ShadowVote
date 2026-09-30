@@ -2,7 +2,7 @@ import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
 // Set the network ID immediately before importing any other Midnight packages.
 // This prevents ESM hoisting issues where packages capture the default network ID.
-const networkId = process.env.MN_NETWORK_ID ?? 'preprod';
+const networkId = process.env.MN_NETWORK_ID ?? 'preview';
 console.log(`Setting global network ID to: ${networkId}`);
 setNetworkId(networkId);
 

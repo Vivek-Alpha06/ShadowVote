@@ -7,24 +7,6 @@ interface Props {
   onSelect: (index: number) => void;
 }
 
-/**
- * Selectable candidate row.
- *
- * Sized for thumbs after user feedback:
- *
- *   "Candidate selection radio buttons are way too small on mobile
- *    touchscreens. I accidentally tapped candidate 2 when trying to select
- *    candidate 3."  -- Rahul Sharma, 3 stars
- *
- *   "Consider making the candidate radio buttons slightly larger on mobile
- *    touchscreens for easier selection."  -- Arpan Ghosh
- *
- * The whole row was already the hit target, so the miss was vertical: rows sat
- * close enough together that a thumb landing between two of them hit the
- * wrong one. A vote is irreversible, so a mis-tap here is not a small error.
- * Rows are now a minimum 64px tall (above the 44px touch guidance with room
- * to spare), the radio is larger, and the caller spaces them further apart.
- */
 export default function CandidateCard({ candidate, selected, disabled, onSelect }: Props) {
   return (
     <button
@@ -32,26 +14,49 @@ export default function CandidateCard({ candidate, selected, disabled, onSelect 
       disabled={disabled}
       onClick={() => onSelect(candidate.index)}
       aria-pressed={selected}
-      className={`flex min-h-[4rem] w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-0 ${
+      className={`group relative flex min-h-[4.25rem] w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${
         selected
-          ? 'border-white/40 bg-white/[0.07] shadow-glow'
-          : 'border-white/10 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]'
+          ? 'border-violet-500/80 bg-violet-950/25 shadow-[0_0_25px_rgba(139,92,246,0.25)] ring-1 ring-violet-500/50'
+          : 'border-white/[0.08] bg-[#0c0d12]/70 hover:border-violet-500/40 hover:bg-[#111219]'
       }`}
     >
+      {/* Radio Indicator */}
       <span
-        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition-colors ${
-          selected ? 'border-white/40' : 'border-slate-500'
+        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition-all duration-200 ${
+          selected
+            ? 'border-violet-400 bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.8)]'
+            : 'border-zinc-600 bg-zinc-900 group-hover:border-zinc-400'
         }`}
         aria-hidden
       >
-        {selected && <span className="h-3 w-3 rounded-full bg-white" />}
+        {selected && <span className="h-2 w-2 rounded-full bg-white" />}
       </span>
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-white/20 to-white/5 text-lg font-bold text-slate-100">
-        {candidate.name.charAt(0).toUpperCase()}
+
+      {/* Candidate Index Badge / Avatar */}
+      <span
+        className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold transition-colors ${
+          selected
+            ? 'bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-sm'
+            : 'bg-gradient-to-br from-white/10 to-white/5 text-zinc-300 group-hover:from-white/15'
+        }`}
+      >
+        #{String(candidate.index + 1).padStart(2, '0')}
       </span>
-      {/* break-words, not truncate: a long name must stay readable rather than
-          disappear behind an ellipsis when it is what you are voting for. */}
-      <span className="min-w-0 break-words font-semibold text-slate-100">{candidate.name}</span>
+
+      {/* Candidate Name & Info */}
+      <div className="min-w-0 flex-1">
+        <span className="block break-words text-base font-semibold text-zinc-100">
+          {candidate.name}
+        </span>
+        <span className="text-[11px] text-zinc-500">Candidate choice #{candidate.index + 1}</span>
+      </div>
+
+      {/* Selected check badge */}
+      {selected && (
+        <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-violet-400/40 bg-violet-500/20 px-2.5 py-1 text-xs font-semibold text-violet-200">
+          Selected ✓
+        </span>
+      )}
     </button>
   );
 }
