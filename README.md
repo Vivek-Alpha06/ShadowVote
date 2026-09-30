@@ -13,6 +13,14 @@
   </p>
 </div>
 
+> [!IMPORTANT]
+> ### 📢 Important Network Notice: Deployment on Midnight Preview (Preprod Coming Soon)
+> **Please Note:** The **Midnight Preprod network is currently not working properly** due to upstream RPC outages, indexer connection errors, and testnet instability. Because Preprod is not functioning properly, **ShadowVote is fully deployed and verified on the Midnight Preview network**.
+> 
+> * **Live Working Network:** **Midnight Preview**
+> * **Verified Contract Address:** [`8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d`](https://explorer.preview.midnight.network/contracts/8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d)
+> * **Preprod Deployment:** **Coming soon** once the Midnight Preprod network stabilizes and starts functioning properly.
+
 ## 📝 Project Description
 
 ShadowVote is a privacy-preserving elections protocol built on the **Midnight** blockchain for the **Midnight Builder Challenge**. It runs elections where nobody can see how you voted — not the organizer, not other voters, not anyone reading the chain — yet everybody can verify the result is correct.

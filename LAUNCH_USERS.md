@@ -10,6 +10,7 @@ improvements shipped and verified on Midnight Preview network.
 - **Preview contract:** 8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d
 - **Feedback Sheet:** https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252
 - **Raw CSV Archive:** [docs/preview_users_feedback.csv](./docs/preview_users_feedback.csv)
+- **Network Notice:** Deployed on **Midnight Preview** because the Preprod network is currently not working properly (RPC/indexer downtime). Preprod support is coming soon.
 
 These users are onboarded personally, following
 [docs/OUTREACH.md § Level 6 Onboarding Script](docs/OUTREACH.md#level-6-onboarding-script),

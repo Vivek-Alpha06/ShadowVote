@@ -9,6 +9,7 @@ ShadowVote on the live deployment.
 - **Preview contract:** 8e60d089f565d4aef839646e8c8c5443ff0f57f2d999e278fc714c2c7efc143d
 - **Feedback Sheet:** https://docs.google.com/spreadsheets/d/1k31OPLH2cy2uLp98bsT5O9cwMuJIuXPlykFiAioGaZw/edit?gid=1376911252#gid=1376911252
 - **Raw CSV Archive:** [docs/preview_users_feedback.csv](./docs/preview_users_feedback.csv)
+- **Network Notice:** Deployed on **Midnight Preview** because the Preprod network is currently not working properly (RPC/indexer downtime). Preprod support is coming soon.
 
 ## What counts as a verified user
 
