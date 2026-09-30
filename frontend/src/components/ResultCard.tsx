@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { CandidateResult } from '../types';
 import { pct } from '../lib/format';
+import { Trophy } from 'lucide-react';
 
 interface Props {
   result: CandidateResult;
@@ -11,40 +12,57 @@ interface Props {
 
 export default function ResultCard({ result, total, isWinner, rank }: Props) {
   const percentage = pct(result.votes, total);
+  
   return (
-    <div
-      className={`rounded-2xl border p-4 ${
-        isWinner ? 'border-white/30 bg-white/[0.04]' : 'border-white/10 bg-white/[0.02]'
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: rank * 0.05 }}
+      className={`credix-card p-5 border transition-all ${
+        isWinner
+          ? 'border-[#2e335b] bg-[#dfe7f9]/50 shadow-md ring-1 ring-[#2e335b]/20'
+          : 'border-[#cdd0e5] bg-white'
       }`}
     >
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-sm font-bold text-slate-300">
-            #{rank}
+          <span className={`grid h-8 w-8 place-items-center rounded-xl border text-xs font-bold ${
+            isWinner
+              ? 'bg-amber-100 border-amber-300 text-amber-900'
+              : 'bg-[#dfe7f9] border-[#cdd0e5] text-[#2e335b]'
+          }`}>
+            {isWinner ? <Trophy className="w-4 h-4 text-amber-700" /> : `#${rank}`}
           </span>
-          <span className="font-semibold text-slate-100">{result.name}</span>
+          <span className="font-bold text-[#2e335b] text-base font-heading">{result.name}</span>
           {isWinner && (
-            <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-bold text-zinc-200">
-              🏆 Winner
+            <span className="tag !text-[10px] !py-0.5 !px-2.5 flex items-center gap-1 font-bold">
+              <Trophy className="w-3 h-3 text-emerald-700" />
+              <span>Certified Winner</span>
             </span>
           )}
         </div>
-        <span className="text-sm font-semibold text-slate-300">
-          {result.votes} · {percentage}%
-        </span>
+        <div className="text-right">
+          <span className="text-base font-extrabold text-[#2e335b] font-mono">
+            {result.votes} {result.votes === 1 ? 'vote' : 'votes'}
+          </span>
+          <span className="ml-2 text-xs font-bold text-indigo-700 font-mono">
+            ({percentage}%)
+          </span>
+        </div>
       </div>
-      <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/5">
+
+      <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#dfe7f9] p-0.5 border border-[#cdd0e5]/70">
         <motion.div
           className={`h-full rounded-full ${
             isWinner
-              ? 'bg-gradient-to-r from-white to-zinc-500'
-              : 'bg-white/20'
+              ? 'bg-[#2e335b] shadow-sm'
+              : 'bg-[#9ba5ea]'
           }`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
+          transition={{ duration: 0.8, delay: 0.2 + rank * 0.05 }}
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

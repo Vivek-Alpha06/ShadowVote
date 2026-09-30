@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { KeyRound, Loader2, Check } from 'lucide-react';
 import { useWallet, WALLET_INSTALL_URL, NETWORK_LABELS } from '../hooks/useWallet';
 import { faucetUrl } from '../lib/faucet';
 import { runDiagnostic } from '../lib/midnightConnector';
@@ -30,28 +31,30 @@ export default function ConnectWallet({ title }: { title?: string }) {
 
   if (connecting) {
     return (
-      <div className="glass flex flex-col items-center gap-3 p-8 text-center">
-        <span className="text-4xl">⏳</span>
-        <p className="font-semibold text-slate-100">
+      <div className="credix-card flex flex-col items-center gap-3 p-8 text-center bg-white border border-[#cdd0e5] text-[#2e335b]">
+        <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-[#2e335b]">
+          <Loader2 className="w-7 h-7 text-[#2e335b] animate-spin" />
+        </div>
+        <p className="font-bold text-[#2e335b] font-heading">
           Waiting for your wallet… <Elapsed />
         </p>
-        <p className="max-w-sm text-sm text-slate-400">
+        <p className="max-w-sm text-xs sm:text-sm text-[#2e335b]/75">
           {step ?? 'Opening wallet…'}
           <br />
-          <span className="text-slate-500">
+          <span className="text-[#2e335b]/60">
             Check the extension popup — it may be behind this window, or need you to click the Lace
             icon in your toolbar.
           </span>
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
-          <button onClick={() => reloadAndConnect()} className="btn-primary">
+          <button onClick={() => reloadAndConnect()} className="button accent sm text-xs">
             Reload &amp; retry
           </button>
-          <button onClick={cancel} className="btn-ghost">
+          <button onClick={cancel} className="button ghost sm text-xs">
             Cancel
           </button>
         </div>
-        <p className="max-w-sm text-xs text-slate-500">
+        <p className="max-w-sm text-[11px] text-[#2e335b]/60">
           Stuck for more than ~10s usually means the wallet's background worker went to sleep.
           Reloading re-injects a live connector.
         </p>
@@ -60,10 +63,12 @@ export default function ConnectWallet({ title }: { title?: string }) {
   }
 
   return (
-    <div className="glass flex flex-col items-center gap-3 p-8 text-center">
-      <span className="text-4xl">🔑</span>
-      <p className="font-semibold text-slate-100">{title ?? 'Connect your wallet'}</p>
-      <p className="max-w-sm text-sm text-slate-400">
+    <div className="credix-card flex flex-col items-center gap-3 p-8 text-center bg-white border border-[#cdd0e5] text-[#2e335b]">
+      <div className="w-14 h-14 rounded-2xl bg-[#dfe7f9] border border-[#cdd0e5] flex items-center justify-center text-[#2e335b]">
+        <KeyRound className="w-7 h-7 text-[#2e335b]" />
+      </div>
+      <p className="font-bold text-[#2e335b] font-heading">{title ?? 'Connect your wallet'}</p>
+      <p className="max-w-sm text-xs sm:text-sm text-[#2e335b]/75">
         {available
           ? 'Approve the connection in your wallet. Your address identifies you to the contract only as an anonymous nullifier.'
           : detecting
@@ -77,14 +82,14 @@ export default function ConnectWallet({ title }: { title?: string }) {
         they had no DUST. Naming the requirement and linking the faucet BEFORE
         they pick a candidate turns a dead end into a two-minute detour.
       */}
-      <p className="max-w-sm text-xs text-slate-500">
+      <p className="max-w-sm text-xs text-[#2e335b]/60">
         New to Midnight? You need test tokens registered for DUST generation before you can vote —
         reading elections is always free.{' '}
         <a
           href={faucetUrl(networkId)}
           target="_blank"
           rel="noreferrer noopener"
-          className="font-semibold text-zinc-200 underline-offset-2 hover:underline"
+          className="font-bold text-[#2e335b] underline hover:text-[#6366f1]"
         >
           Get test tokens ↗
         </a>
@@ -93,26 +98,26 @@ export default function ConnectWallet({ title }: { title?: string }) {
       {wallets.length > 1 ? (
         <div className="mt-1 flex flex-wrap justify-center gap-2">
           {wallets.map((w) => (
-            <button key={w.key} onClick={() => connect(w)} className="btn-primary flex items-center gap-2">
+            <button key={w.key} onClick={() => connect(w)} className="button accent sm text-xs flex items-center gap-2">
               {w.icon && <img src={w.icon} alt="" className="h-4 w-4 rounded" />}
               Connect {w.name}
             </button>
           ))}
         </div>
       ) : (
-        <motion.button whileTap={{ scale: 0.96 }} onClick={() => connect()} className="btn-primary mt-1">
+        <motion.button whileTap={{ scale: 0.96 }} onClick={() => connect()} className="button accent sm text-xs mt-1">
           Connect {wallets[0]?.name ?? walletName ?? 'Wallet'}
         </motion.button>
       )}
 
       {error && (
-        <div className="mt-1 max-w-md rounded-xl border border-rose-400/20 bg-rose-400/5 p-3 text-sm text-rose-200">
-          <p className="whitespace-pre-line text-left">{error.message}</p>
+        <div className="mt-1 max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-800">
+          <p className="whitespace-pre-line text-left font-medium">{error.message}</p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
             {(error.code === 'CHANNEL_DEAD' || error.code === 'TIMEOUT') && (
               <button
                 onClick={() => reloadAndConnect()}
-                className="rounded-lg bg-rose-400/20 px-3 py-1.5 font-semibold text-rose-100 hover:bg-rose-400/30"
+                className="button ghost sm text-xs"
               >
                 Reload &amp; connect
               </button>
@@ -122,12 +127,12 @@ export default function ConnectWallet({ title }: { title?: string }) {
                 href={WALLET_INSTALL_URL}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="font-semibold underline hover:text-rose-100"
+                className="font-bold underline hover:text-rose-900"
               >
                 Wallet setup guide ↗
               </a>
             )}
-            <button onClick={clearError} className="underline hover:text-rose-100">
+            <button onClick={clearError} className="underline hover:text-rose-900 font-bold">
               dismiss
             </button>
           </div>
@@ -251,9 +256,16 @@ function FullDiagnostic() {
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             }}
-            className="mt-1 text-xs font-semibold text-white hover:underline"
+            className="mt-1 text-xs font-semibold text-white hover:underline inline-flex items-center gap-1"
           >
-            {copied ? '✓ Copied' : 'Copy report'}
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Copied</span>
+              </>
+            ) : (
+              'Copy report'
+            )}
           </button>
         </>
       )}

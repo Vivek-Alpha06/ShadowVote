@@ -3,22 +3,24 @@
 // ---------------------------------------------------------------------------
 // An "SV" Overlapping Triangle Line Monogram:
 // Flat 3D isometric ribbon lines forming the interlocking letters S and V
-// inside a geometric triangle structure.
+// inside a geometric triangle structure with pure radiant white & silver accents.
 // ===========================================================================
 
 export function LogoMark({
   size = 40,
   boxed = false,
+  light = true,
   className = '',
 }: {
   size?: number;
   boxed?: boolean;
+  light?: boolean;
   className?: string;
 }) {
   return (
     <div className={`relative inline-flex items-center justify-center group ${className}`}>
       {/* Ambient Backdrop Glow */}
-      <div className="absolute -inset-1 bg-purple-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute -inset-1 bg-white/40 rounded-full blur-md opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       <svg
         width={size}
@@ -31,20 +33,38 @@ export function LogoMark({
       >
         <defs>
           <linearGradient id="sv-grad-primary" x1="4" y1="6" x2="44" y2="42" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="60%" stopColor="#e4d4f4" />
-            <stop offset="100%" stopColor="#a855f7" />
+            {light ? (
+              <>
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="60%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#e2e8f0" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#2e335b" />
+                <stop offset="50%" stopColor="#4f46e5" />
+                <stop offset="100%" stopColor="#7c3aed" />
+              </>
+            )}
           </linearGradient>
 
           {/* 3D Drop Shadow */}
           <filter id="sv-depth-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="#000000" floodOpacity="0.7" />
-            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#a855f7" floodOpacity="0.4" />
+            <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor={light ? '#000000' : '#2e335b'} floodOpacity={light ? '0.6' : '0.2'} />
           </filter>
         </defs>
 
         {boxed && (
-          <rect x="5" y="7" width="38" height="34" rx="8" fill="#0c0d12" stroke="#27272a" strokeWidth="1" />
+          <rect
+            x="5"
+            y="7"
+            width="38"
+            height="34"
+            rx="8"
+            fill={light ? 'rgba(255,255,255,0.15)' : '#ffffff'}
+            stroke={light ? 'rgba(255,255,255,0.3)' : '#cdd0e5'}
+            strokeWidth="1"
+          />
         )}
 
         {/* SV Inverted Overlapping Triangle Vector Geometry */}
@@ -67,14 +87,20 @@ export function LogoMark({
 }
 
 /** Mark plus wordmark, for the navbar and any header use. */
-export default function Logo({ size = 40 }: { size?: number }) {
+export default function Logo({ size = 36, light = true }: { size?: number; light?: boolean }) {
   return (
-    <span className="flex items-center gap-3 group cursor-pointer">
-      <LogoMark size={size} boxed={false} />
-      <span className="text-lg font-bold tracking-tight text-white flex items-center gap-0.5 font-sans transition-colors group-hover:text-zinc-200">
-        Shadow<span className="text-purple-400 group-hover:text-purple-300">Vote</span>
+    <span className="flex items-center gap-2.5 group cursor-pointer select-none">
+      <LogoMark size={size} light={light} boxed={false} />
+      <span
+        style={{ color: light ? '#ffffff' : '#2e335b' }}
+        className={`text-xl sm:text-2xl font-extrabold tracking-tight font-heading ${
+          light
+            ? '!text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]'
+            : '!text-[#2e335b]'
+        }`}
+      >
+        Shadow<span style={{ color: light ? '#ffffff' : '#6366f1' }} className={light ? '!text-white font-extrabold drop-shadow-[0_2px_12px_rgba(255,255,255,0.9)]' : '!text-[#6366f1]'}>Vote</span>
       </span>
     </span>
   );
 }
-

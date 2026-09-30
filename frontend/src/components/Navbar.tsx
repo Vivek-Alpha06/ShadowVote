@@ -6,10 +6,10 @@ import NetworkSwitch from './NetworkSwitch';
 import { SHOW_NETWORK_SWITCH } from '../lib/networkPreference';
 
 const links = [
-  { to: '/dashboard', label: 'Dashboard', icon: '🗳️' },
-  { to: '/create', label: 'Create Election', icon: '➕' },
-  { to: '/results', label: 'Live Results', icon: '📊' },
-  { to: '/history', label: 'History', icon: '📜' },
+  { to: '/dashboard', label: 'Elections' },
+  { to: '/create', label: 'Create Ballot' },
+  { to: '/results', label: 'Results' },
+  { to: '/history', label: 'Audit Log' },
 ];
 
 export default function Navbar() {
@@ -17,32 +17,48 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#060608]/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-2.5 transition-transform hover:scale-105">
-            <Logo size={36} />
+    <header className="fixed top-0 left-0 right-0 w-full z-50 h-[72px] bg-[#0d1124]/35 backdrop-blur-md border-b border-white/15 transition-all duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        {/* Left: Brand Logo & Testnet Indicator */}
+        <div className="flex items-center gap-3.5">
+          <Link to="/" className="flex items-center gap-2.5 transition-transform hover:scale-[1.02]">
+            <Logo size={32} light={true} />
           </Link>
-
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/15 backdrop-blur-md border border-white/25 text-white shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              Preview Testnet
+            </span>
+          </div>
           {SHOW_NETWORK_SWITCH && (
-            <div className="hidden sm:block">
+            <div className="hidden lg:block">
               <NetworkSwitch compact />
             </div>
           )}
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 sm:flex bg-[#0b0c10] border border-white/[0.08] p-1 rounded-xl shadow-inner">
+        {/* Center: Desktop Navigation Pill */}
+        <nav className="hidden md:flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded-full border border-white/20 shadow-xs">
+          <Link
+            to="/"
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
+              pathname === '/'
+                ? 'bg-white text-[#2e335b] shadow-md font-bold'
+                : 'text-white/85 hover:text-white hover:bg-white/15'
+            }`}
+          >
+            Home
+          </Link>
           {links.map((l) => {
             const active = pathname.startsWith(l.to);
             return (
               <Link
                 key={l.to}
                 to={l.to}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
                   active
-                    ? 'bg-gradient-to-r from-violet-600/80 to-indigo-600/80 text-white shadow-[0_0_15px_rgba(139,92,246,0.35)] border border-violet-400/30'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.05]'
+                    ? 'bg-white text-[#2e335b] shadow-md font-bold'
+                    : 'text-white/85 hover:text-white hover:bg-white/15'
                 }`}
               >
                 {l.label}
@@ -51,14 +67,15 @@ export default function Navbar() {
           })}
         </nav>
 
+        {/* Right: Actions */}
         <div className="flex items-center gap-2.5">
           <WalletButton />
 
-          {/* Mobile hamburger button */}
+          {/* Mobile hamburger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="grid h-9 w-9 place-items-center rounded-xl border border-zinc-800 bg-zinc-900/80 text-zinc-300 sm:hidden hover:text-white hover:border-zinc-700"
+            className="md:hidden grid h-9 w-9 place-items-center rounded-full border border-white/25 bg-white/15 backdrop-blur-md text-white hover:bg-white/25 transition-colors"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? (
@@ -74,32 +91,31 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown drawer */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="border-b border-white/[0.08] bg-[#090a0f] px-4 py-4 sm:hidden">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Navigation</span>
+        <div className="pointer-events-auto absolute top-[74px] left-4 right-4 bg-[#141833]/95 backdrop-blur-xl p-5 md:hidden z-50 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl border border-white/20">
+          <div className="mb-3 flex items-center justify-between border-b border-white/15 pb-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80">Navigation</span>
             {SHOW_NETWORK_SWITCH && <NetworkSwitch compact />}
           </div>
           <div className="flex flex-col gap-1.5">
-            {links.map((l) => {
-              const active = pathname.startsWith(l.to);
-              return (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
-                    active
-                      ? 'bg-violet-600/30 text-white border border-violet-500/40 shadow-sm'
-                      : 'text-zinc-400 hover:bg-white/[0.05] hover:text-white'
-                  }`}
-                >
-                  <span aria-hidden>{l.icon}</span>
-                  {l.label}
-                </Link>
-              );
-            })}
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+            >
+              Home
+            </Link>
+            {links.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+              >
+                {l.label}
+              </Link>
+            ))}
           </div>
         </div>
       )}

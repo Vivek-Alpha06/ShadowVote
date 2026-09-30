@@ -8,16 +8,24 @@ import { getSession, subscribe } from '../lib/chainSession';
 import { readTxHistory, subscribeTxHistory, clearTxHistory, type TxRecord } from '../lib/txHistory';
 import { explorerTxUrl, explorerBase } from '../lib/explorer';
 import { formatDate } from '../lib/format';
+import {
+  Vote,
+  Send,
+  CheckCircle2,
+  Activity,
+  FileText,
+  Inbox,
+  Check,
+  ExternalLink,
+  Copy,
+  ArrowRight,
+} from 'lucide-react';
 
-/**
- * Every transaction this wallet has submitted, with a link out to the block
- * explorer so anyone can verify it independently rather than taking this app's
- * word for it.
- */
 export default function History() {
   const { connected, networkId } = useWallet();
   const [, force] = useState(0);
   const [session, setSession] = useState(getSession());
+  const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
   useEffect(() => subscribeTxHistory(() => force((n) => n + 1)), []);
   useEffect(() => subscribe(() => setSession(getSession())), []);
@@ -25,130 +33,159 @@ export default function History() {
   const wallet = session?.info.coinPublicKey ?? null;
   const records: TxRecord[] = useMemo(() => readTxHistory(wallet), [wallet]);
 
-  // The session's id comes from the wallet's own getConfiguration() and is the
-  // authoritative one; the hook's copy can still be null right after connecting.
-  const network = session?.info.config.networkId ?? networkId ?? null;
+  const network = session?.info.config.networkId ?? networkId ?? 'preview';
   const hasExplorer = explorerBase(network) !== null;
+
+  const handleCopy = (hash: string) => {
+    navigator.clipboard?.writeText(hash);
+    setCopiedHash(hash);
+    setTimeout(() => setCopiedHash(null), 1500);
+  };
+
+  const getActionBadge = (action: string) => {
+    if (action.toLowerCase().includes('vote')) return { icon: Vote, label: 'Cast Confidential Vote', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
+    if (action.toLowerCase().includes('create')) return { icon: Send, label: 'Election Deployment', color: 'text-indigo-700 bg-indigo-50 border-indigo-200' };
+    if (action.toLowerCase().includes('close')) return { icon: CheckCircle2, label: 'Tally Publication', color: 'text-purple-700 bg-purple-50 border-purple-200' };
+    return { icon: Activity, label: action, color: 'text-[#202952] bg-[#dfe7f9] border-[#cdd0e5]' };
+  };
 
   if (!connected) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16">
-        <h1 className="mb-2 text-center text-2xl font-bold">Transaction history</h1>
-        <p className="mb-6 text-center text-slate-400">
-          Your history is stored per wallet, so connect the one you want to see.
-        </p>
-        <ConnectWallet title="Connect your wallet to see its history" />
-      </div>
+      <PageShell>
+        <div className="mx-auto max-w-lg px-4 py-20 text-center credix-card p-8 bg-white border border-[#cdd0e5]">
+          <div className="w-16 h-16 rounded-2xl bg-[#dfe7f9] border border-[#cdd0e5] flex items-center justify-center text-[#202952] mx-auto mb-3">
+            <FileText className="w-8 h-8 text-[#202952]/70" />
+          </div>
+          <h1 className="mt-4 text-2xl font-bold text-[#2e335b] font-heading">Transaction History</h1>
+          <p className="mt-2 mb-6 text-xs sm:text-sm text-[#2e335b]/75">
+            Connect your Lace wallet to view your verified on-chain Midnight transactions.
+          </p>
+          <ConnectWallet title="Connect Lace Wallet" />
+        </div>
+      </PageShell>
     );
   }
 
   return (
     <PageShell>
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <PageHeader
-        eyebrow="Verifiable record"
-        title="Transaction history"
-        subtitle={
-          <>
-            Every transaction this wallet has submitted. Each one is a public, verifiable record on
-            the {NETWORK_LABEL_OVERRIDE ?? network ?? 'Midnight'} chain.
-          </>
-        }
-        actions={
-          records.length > 0 ? (
-          <button
-            onClick={() => {
-              clearTxHistory(wallet);
-              force((n) => n + 1);
-            }}
-            className="btn-ghost text-xs"
-            title="Removes the local list only — the transactions stay on-chain forever"
-          >
-            Clear local list
-            </button>
-          ) : null
-        }
-      />
-
-      {/*
-        Only warn once we actually KNOW the network. Before the session resolves,
-        `network` is null — and rendering this then produced the nonsense
-        "No block explorer is known for , ..." with an empty name, which read as
-        a fault rather than as "still loading".
-      */}
-      {network && !hasExplorer && records.length > 0 && (
-        <p className="mt-4 rounded-lg border border-amber-400/25 bg-amber-400/10 p-3 text-sm text-amber-200">
-          No block explorer is known for <strong>{NETWORK_LABEL_OVERRIDE ?? network}</strong>, so the
-          verify links are hidden.
-          The hashes below are still real — you can look them up through the indexer.
-        </p>
-      )}
-
-      {records.length === 0 ? (
-        <div className="glass mt-8 p-8 text-center">
-          <p className="text-slate-300">No transactions yet.</p>
-          <p className="mt-1 text-sm text-slate-500">
-            Creating an election or casting a vote will record one here.
-          </p>
-          <Link to="/dashboard" className="btn-primary mt-5 inline-block">
-            Browse elections
-          </Link>
-        </div>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {records.map((tx, i) => {
-            const url = explorerTxUrl(tx.hash, tx.networkId ?? network);
-            return (
-              <Reveal
-                key={tx.hash}
-                index={Math.min(i, 8)}
-                inView
-                className="glass glass-hover p-4"
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <PageHeader
+          eyebrow="On-Chain Ledger History"
+          title="Transaction History"
+          subtitle={
+            <>
+              Every transaction submitted by this wallet on the{' '}
+              <span className="text-[#2e335b] font-bold font-mono">Midnight {NETWORK_LABEL_OVERRIDE ?? network}</span>{' '}
+              blockchain. Each is an immutable, verifiable cryptographic record.
+            </>
+          }
+          actions={
+            records.length > 0 ? (
+              <button
+                onClick={() => {
+                  clearTxHistory(wallet);
+                  force((n) => n + 1);
+                }}
+                className="button ghost sm text-xs"
+                title="Clears local cache only — transactions remain permanent on-chain"
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="font-semibold text-slate-100">{tx.action}</p>
-                  <span className="text-xs text-slate-500">{formatDate(tx.at)}</span>
-                </div>
+                Clear Local History
+              </button>
+            ) : null
+          }
+        />
 
-                <p className="mt-2 break-all font-mono text-xs text-zinc-300">{tx.hash}</p>
+        {network && !hasExplorer && records.length > 0 && (
+          <p className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
+            Explorer not currently indexed for <strong>{NETWORK_LABEL_OVERRIDE ?? network}</strong>. Hashes can still be queried directly through the indexer.
+          </p>
+        )}
 
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {url && (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary px-3 py-1.5 text-xs"
-                    >
-                      Verify on explorer ↗
-                    </a>
-                  )}
-                  <button
-                    onClick={() => navigator.clipboard?.writeText(tx.hash)}
-                    className="btn-ghost px-3 py-1.5 text-xs"
-                  >
-                    Copy hash
-                  </button>
-                  {tx.electionId && (
-                    <Link
-                      to={`/election/${tx.electionId}`}
-                      className="btn-ghost px-3 py-1.5 text-xs"
-                    >
-                      View election #{tx.electionId}
-                    </Link>
-                  )}
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-      )}
+        {records.length === 0 ? (
+          <div className="credix-card mt-8 p-10 text-center bg-white border border-[#cdd0e5]">
+            <div className="w-16 h-16 rounded-2xl bg-[#dfe7f9] border border-[#cdd0e5] flex items-center justify-center text-[#202952] mx-auto mb-3">
+              <Inbox className="w-8 h-8 text-[#202952]/70" />
+            </div>
+            <p className="mt-3 text-lg font-bold text-[#2e335b] font-heading">No Local Transactions Yet</p>
+            <p className="mt-1 text-xs text-[#2e335b]/75">
+              When you deploy an election or cast a confidential zero-knowledge vote, it will be logged here with its transaction hash.
+            </p>
+            <Link to="/dashboard" className="button accent sm mt-6 text-xs font-bold inline-flex items-center gap-1.5">
+              <span>Explore Live Elections</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-8 space-y-4">
+            {records.map((r, i) => {
+              const badge = getActionBadge(r.action);
+              const Icon = badge.icon;
+              const txUrl = explorerTxUrl(r.hash, network);
 
-      <p className="mt-8 text-center text-xs text-slate-500">
-        History is stored in this browser, per wallet. Clearing it removes the list — never the
-        transactions, which are permanent on-chain.
-      </p>
+              return (
+                <Reveal key={r.hash + r.at} index={i}>
+                  <div className="credix-card p-5 bg-white border border-[#cdd0e5] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-start gap-3.5">
+                      <div className={`w-10 h-10 shrink-0 rounded-xl border flex items-center justify-center ${badge.color}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-[#2e335b] text-sm sm:text-base font-heading">
+                            {r.action}
+                          </span>
+                          <span className="tag !text-[10px] !py-0.5 !px-2">
+                            {badge.label}
+                          </span>
+                        </div>
+
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-[#2e335b]/70">
+                          <span className="font-mono text-[#2e335b]">{r.hash.slice(0, 14)}…{r.hash.slice(-8)}</span>
+                          <span>•</span>
+                          <span>{formatDate(r.at)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                      <button
+                        onClick={() => handleCopy(r.hash)}
+                        className="button ghost sm text-xs !py-1.5 !px-3 inline-flex items-center gap-1 font-semibold"
+                        title="Copy full transaction hash"
+                      >
+                        {copiedHash === r.hash ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy Hash</span>
+                          </>
+                        )}
+                      </button>
+
+                      {txUrl && (
+                        <a
+                          href={txUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="button sm text-xs !py-1.5 !px-3 inline-flex items-center gap-1 font-semibold"
+                        >
+                          <span>Explorer</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        )}
     </div>
-    </PageShell>
-  );
+  </PageShell>
+);
 }

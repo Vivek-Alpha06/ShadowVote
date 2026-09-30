@@ -21,9 +21,11 @@ import { formatDust } from '../lib/format';
  * the zero case links straight to the faucet.
  */
 
+import { AlertTriangle } from 'lucide-react';
+
 const POLL_MS = 20_000;
 
-export default function DustBalance() {
+export default function DustBalance({ glass = false }: { glass?: boolean }) {
   const { api, connected, networkId } = useWallet();
   const [dust, setDust] = useState<bigint | null>(null);
 
@@ -66,21 +68,29 @@ export default function DustBalance() {
         href={faucetUrl(networkId)}
         target="_blank"
         rel="noreferrer noopener"
-        className="flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-200 transition-colors hover:bg-amber-500/20"
+        className={
+          glass
+            ? "flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-500/20 backdrop-blur-md px-3 py-1 text-xs font-semibold text-amber-200 transition-all hover:bg-amber-500/30 shadow-xs"
+            : "flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 transition-all hover:bg-amber-100"
+        }
         title="You have no DUST, so transactions cannot be paid for. Get test tokens and register them for DUST generation."
       >
-        <span aria-hidden>⚠️</span>
-        <span>No DUST — get tokens ↗</span>
+        <AlertTriangle className={`w-3.5 h-3.5 ${glass ? 'text-amber-300' : 'text-amber-600'} shrink-0`} />
+        <span>No DUST — faucet ↗</span>
       </a>
     );
   }
 
   return (
     <span
-      className="hidden items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 sm:flex"
+      className={
+        glass
+          ? "hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-3 py-1 text-xs font-bold text-emerald-300 sm:flex shadow-xs"
+          : "hidden items-center gap-1.5 rounded-full border border-[#cdd0e5] bg-[#dfe7f9] px-3 py-1 text-xs font-bold text-[#2e335b] sm:flex shadow-sm"
+      }
       title={`${formatDust(dust)} DUST available to pay transaction fees (${dust.toLocaleString()} SPECK)`}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
       {formatDust(dust)} DUST
     </span>
   );

@@ -66,33 +66,68 @@ The problem it solves: on an ordinary public blockchain a secret ballot is impos
 
 ## 📸 Screenshots & Submission Proofs
 
-### 1. Landing Page
-The entry point: the privacy guarantee stated plainly, with the Compact circuit that
-enforces it shown rather than described.
+### 1. Landing Page Evolution (Old vs New)
 
-<img src="./screenshots/landing.png" alt="ShadowVote landing page — Vote Privately. Verify Publicly." width="900" />
+<table>
+  <thead>
+    <tr style="background: #141833; color: white;">
+      <th width="50%" align="center"><b>📦 Legacy UI (v1.0 Initial MVP)</b></th>
+      <th width="50%" align="center"><b>✨ Modernized Glassmorphic UI (v2.0 OVO Credix Aesthetic)</b></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td valign="top" align="center">
+        <a href="./screenshots/landing.png" target="_blank">
+          <img src="./screenshots/landing.png" alt="Legacy ShadowVote Landing Page" width="100%" />
+        </a>
+        <br/><br/>
+        <div align="left">
+          <b>Legacy UI Features:</b>
+          <ul>
+            <li>Static dark gradient hero layout</li>
+            <li>Basic category emoji tags</li>
+            <li>Separated, disconnected action containers</li>
+            <li>Standard 2D card surfaces</li>
+          </ul>
+        </div>
+      </td>
+      <td valign="top" align="center">
+        <a href="./screenshots/New_Landing.png" target="_blank">
+          <img src="./screenshots/New_Landing.png" alt="New Modernized ShadowVote Landing Page" width="100%" />
+        </a>
+        <br/><br/>
+        <div align="left">
+          <b>Modernized v2.0 UI Upgrades:</b>
+          <ul>
+            <li>✨ <b>Signature Looping Cloud Video &amp; Atmospheric Blend</b></li>
+            <li>💫 <b>Interactive 3D Scroll-Driven Tilting Showcase</b> with Client-Side Prover Simulator</li>
+            <li>🛡️ <b>Clean Vector Lucide Icons</b> (Zero Raw Emojis)</li>
+            <li>🔮 <b>Unified Web3 Glassmorphic Account Capsule &amp; Dropdown Menu</b></li>
+            <li>📐 <b>Dynamic 3D Hover Perspective Panels &amp; Architectural Tabs</b></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-### 2. Elections Dashboard
-Every election on one contract, filterable by status and type. Readable with no
-wallet connected — public auditing costs nothing.
+### 2. Elections Dashboard & Hub
+Every election on one contract, filterable by status and category with real-time participation metrics. Readable with no wallet connected — public auditing costs nothing.
 
-<img src="./screenshots/dashboard.png" alt="Elections dashboard listing active and ended elections" width="900" />
+<img src="./screenshots/new_ui.png" alt="New ShadowVote Elections Hub with Live Category Filters and Stats" width="900" />
 
 ### 3. Creating an Election
-Name, description, candidate set, type and voting window. The organizer is recorded
-as a key *commitment*, never as a wallet address.
+Configure custom name, description, category, multi-candidate set, and voting duration window with live preview. The organizer is recorded as a key *commitment*, never as a wallet address.
 
-<img src="./screenshots/create.png" alt="Election creation form" width="900" />
+<img src="./screenshots/new_ballot.png" alt="New Create Ballot Form with Dynamic Category Selector and Live Preview" width="900" />
 
-Creating an election is a real on-chain transaction, signed in Lace. The prompt shows
-the call it is authorising — `entry_point: createElection` against the deployed
-contract — so the wallet is never asked to sign something opaque.
+Creating an election is a real on-chain transaction, signed in Lace. The prompt shows the call it is authorising — `entry_point: createElection` against the deployed contract — so the wallet is never asked to sign something opaque.
 
 <img src="./screenshots/confirmation.png" alt="Lace wallet prompt showing the createElection transaction being signed" width="900" />
 
 ### 4. Casting a Private Ballot
-The proof is generated locally in the browser. The candidate choice never leaves the
-device — only a zero-knowledge proof that the choice was valid does.
+The proof is generated locally in the browser. The candidate choice never leaves the device — only a zero-knowledge proof that the choice was valid does.
 
 <table>
 <tr>
@@ -111,19 +146,15 @@ device — only a zero-knowledge proof that the choice was valid does.
 </tr>
 </table>
 
-The middle step is the whole product in one frame: *Generating zero-knowledge proof*
-runs on the voter's own machine, so the candidate never reaches the network — only a
-proof that some valid candidate was chosen.
+The middle step is the whole product in one frame: *Generating zero-knowledge proof* runs on the voter's own machine, so the candidate never reaches the network — only a proof that some valid candidate was chosen.
 
-### 5. Results — Sealed Until Close
-Tallies stay hidden while voting is open and publish automatically the moment the
-deadline passes, which removes the bandwagon effect from live on-chain counts.
+### 5. Results — Sealed Until Close & Decrypted Podiums
+Tallies stay hidden while voting is open and publish automatically the moment the deadline passes, which removes the bandwagon effect from live on-chain counts.
 
-<img src="./screenshots/result.png" alt="Election results with per-candidate tallies" width="900" />
+<img src="./screenshots/New_result.png" alt="New Election Results and Tallies with Decrypted Winner Badges" width="900" />
 
 ### 6. On-Chain Transaction History & Explorer Verification
-Every transaction this wallet submitted, each with a **Verify on explorer ↗** link.
-A privacy product that asks you to take its word for things has missed the point.
+Every transaction this wallet submitted, each with a **Verify on explorer ↗** link. A privacy product that asks you to take its word for things has missed the point.
 
 <img src="./screenshots/history.png" alt="Transaction history with explorer verification links" width="900" />
 

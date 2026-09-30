@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { timeLeft } from '../lib/format';
 
-/**
- * Live countdown. `onEnd` fires once, the moment the deadline passes, so the
- * page can re-read the election and flip to its results without a reload.
- */
 export default function Timer({ endTime, onEnd }: { endTime: number; onEnd?: () => void }) {
   const [label, setLabel] = useState(() => timeLeft(endTime));
   const firedRef = useRef(false);
@@ -27,8 +23,8 @@ export default function Timer({ endTime, onEnd }: { endTime: number; onEnd?: () 
 
   const ended = label === 'Ended';
   return (
-    <span className={`font-mono text-sm ${ended ? 'text-slate-500' : 'text-zinc-300'}`}>
-      {ended ? '⏱ Voting ended' : `⏱ ${label}`}
+    <span className={`font-mono text-xs font-semibold ${ended ? 'text-[#2e335b]/50' : 'text-[#2e335b]'}`}>
+      {ended ? '⏱ Ended' : `⏱ ${label}`}
     </span>
   );
 }

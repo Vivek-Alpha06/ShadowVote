@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { contractService } from '../lib/contractService';
 import { PageShell } from '../components/Motion';
-import type { Election } from '../types';
+import { categoryMeta, type Election } from '../types';
 import Spinner from '../components/Spinner';
 import StatusBadge from '../components/StatusBadge';
 import Timer from '../components/Timer';
@@ -16,6 +15,16 @@ import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
 import type { TxStage } from '../lib/txStages';
 import CopyLinkButton from '../components/ShareActions';
+import CategoryIcon from '../components/CategoryIcon';
+import {
+  Vote,
+  Lock,
+  Trophy,
+  BarChart3,
+  CheckCircle2,
+  ArrowLeft,
+  ShieldCheck,
+} from 'lucide-react';
 
 export default function ElectionDetails() {
   const { id = '' } = useParams();
@@ -44,19 +53,12 @@ export default function ElectionDetails() {
     refresh();
   }, [refresh]);
 
-  /**
-   * A wallet that disconnects mid-proof used to leave the modal spinning
-   * forever with no way out — reported as an infinite loading spinner that
-   * only a reload cleared. The proof itself cannot be cancelled, but the UI
-   * must not pretend it is still on track.
-   */
   useEffect(() => {
     if (connected || !submitting) return;
     setSubmitting(false);
     setStage(null);
     setVoteError(
-      'Your wallet disconnected while the proof was being generated, so the vote was never ' +
-        'submitted. Reconnect and try again — your selection is still here.',
+      'Your wallet disconnected while the ZK proof was generating, so the vote was not submitted. Reconnect to retry — your selection is preserved.',
     );
   }, [connected, submitting]);
 
@@ -67,14 +69,11 @@ export default function ElectionDetails() {
     setStage(null);
     try {
       await contractService.castVote(id, selected, address, setStage);
-      toast.success('Your private vote was cast 🔒');
+      toast.success('Your private vote was cast on-chain');
       setModalOpen(false);
       setVoted(true);
       await refresh();
     } catch (err) {
-      // Deliberately NOT a toast-and-close: a toast disappears, and closing the
-      // modal discarded the ballot so the voter had to re-pick and re-prove
-      // from scratch. Keep the modal, keep the selection, offer a retry.
       setVoteError(err instanceof Error ? err.message : 'The vote could not be submitted.');
     } finally {
       setSubmitting(false);
@@ -93,7 +92,7 @@ export default function ElectionDetails() {
     setClosing(true);
     try {
       await contractService.closeElection(id, address);
-      toast.success('Voting ended — results are now public');
+      toast.success('Voting ended — results are now published on-chain');
       navigate(`/election/${id}/results`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not end voting');
@@ -102,115 +101,185 @@ export default function ElectionDetails() {
     }
   }
 
-  if (loading) return <Spinner label="Loading election…" />;
-  if (!election)
+  if (loading) return (
+    <div className="py-24 flex justify-center">
+      <Spinner label="Fetching election details from Midnight Preview indexer…" />
+    </div>
+  );
+
+  if (!election) {
     return (
-      <div className="mx-auto max-w-md px-4 py-24 text-center">
-        <p className="text-4xl">🤷</p>
-        <h1 className="mt-4 text-2xl font-bold">Election not found</h1>
-        <Link to="/dashboard" className="btn-ghost mt-6">
-          ← Back to dashboard
-        </Link>
-      </div>
+      <PageShell>
+        <div className="mx-auto max-w-xl text-center py-20 credix-card p-10 bg-white border border-[#cdd0e5]">
+          <div className="w-16 h-16 rounded-2xl bg-[#dfe7f9] border border-[#cdd0e5] flex items-center justify-center text-[#202952] mx-auto mb-3">
+            <Vote className="w-8 h-8 text-[#202952]/70" />
+          </div>
+          <h2 className="text-2xl font-bold text-[#2e335b] font-heading mt-4">Election Not Found</h2>
+          <p className="mt-2 text-xs sm:text-sm text-[#2e335b]/75">
+            This election could not be found on the Midnight Preview ledger.
+          </p>
+          <Link to="/dashboard" className="button accent sm mt-6 text-xs font-bold inline-flex items-center gap-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Elections Hub</span>
+          </Link>
+        </div>
+      </PageShell>
     );
+  }
 
   const isClosed = election.status === 'CLOSED';
-  const isCreator = Boolean(address) && contractService.isOrganizer(election, address!);
-  const selectedCandidate =
-    selected !== null ? election.candidates.find((c) => c.index === selected) ?? null : null;
+  const cat = categoryMeta(election.category);
+  const selectedCandidate = selected !== null ? election.candidates[selected] ?? null : null;
 
   return (
     <PageShell>
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link to="/dashboard" className="text-sm text-slate-400 hover:text-slate-200">
-        ← All elections
-      </Link>
-
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-          <h1 className="text-3xl font-extrabold tracking-tight">{election.name}</h1>
-          <StatusBadge status={election.status} />
-        </div>
-        <p className="text-slate-400">{election.description}</p>
-
-        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-400">
-          <Timer endTime={election.endTime} onEnd={refresh} />
-          <span>Ends {formatDate(election.endTime)}</span>
-          <span>{election.totalVotes} votes cast</span>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mb-4 flex items-center justify-between">
+          <Link to="/dashboard" className="text-xs font-bold text-[#2e335b]/70 hover:text-[#2e335b] inline-flex items-center gap-1.5 transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Elections Hub</span>
+          </Link>
+          <CopyLinkButton />
         </div>
 
-        {/* Organizers were hand-selecting the URL out of the address bar to
-            paste into Telegram and Discord. */}
-        <div className="mt-4">
-          <CopyLinkButton url={window.location.href} label="Copy election link" />
-        </div>
-      </motion.div>
-
-      {/* Voting area */}
-      <div className="mt-8">
-        {isClosed ? (
-          <div className="glass p-6 text-center">
-            <p className="text-slate-300">Voting has ended for this election.</p>
-            <Link to={`/election/${id}/results`} className="btn-primary mt-4">
-              View Results →
-            </Link>
-          </div>
-        ) : voted ? (
-          <div className="glass flex flex-col items-center gap-2 p-8 text-center">
-            <span className="text-4xl">✅</span>
-            <p className="font-semibold text-slate-100">You've voted in this election</p>
-            <p className="text-sm text-slate-400">
-              Your choice is private and can't be changed. Results are published when the timer runs
-              out.
-            </p>
-          </div>
-        ) : !connected ? (
-          <ConnectWallet title="Connect your wallet to cast a private vote" />
-        ) : (
-          <>
-            <h2 className="mb-3 font-bold text-slate-100">Select a candidate</h2>
-            {/* Wider gaps on mobile: a thumb landing between two rows used
-                to select the wrong candidate, and a vote cannot be undone. */}
-            <div className="space-y-4 sm:space-y-3">
-              {election.candidates.map((c) => (
-                <CandidateCard
-                  key={c.index}
-                  candidate={c}
-                  selected={selected === c.index}
-                  onSelect={setSelected}
-                />
-              ))}
+        {/* Hero Card */}
+        <div className="credix-card p-6 sm:p-8 bg-white border border-[#cdd0e5] shadow-credix">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="tag !text-[11px] flex items-center gap-1.5">
+                <CategoryIcon category={election.category} className="w-3.5 h-3.5" />
+                <span>{cat.label}</span>
+              </span>
+              <span className="text-xs text-[#2e335b]/60 font-mono">Ballot #{election.id}</span>
             </div>
-            <button
-              onClick={() => setModalOpen(true)}
-              disabled={selected === null}
-              className="btn-primary mt-5 w-full"
-            >
-              {selected === null ? 'Select a candidate to vote' : 'Cast Secret Vote'}
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Creator-only control: ending early publishes the tally, so a bystander
-          must not be able to trigger it. */}
-      {!isClosed && isCreator && (
-        <div className="glass mt-6 flex flex-wrap items-center justify-between gap-3 p-4">
-          <div className="text-sm">
-            <p className="font-semibold text-slate-200">You created this election</p>
-            <p className="text-slate-400">
-              It closes on its own at the deadline. You can also end it now to publish the result
-              early.
-            </p>
+            <div className="flex items-center gap-3">
+              <StatusBadge status={election.status} />
+              <Timer endTime={election.endTime} onEnd={refresh} />
+            </div>
           </div>
-          <button onClick={handleClose} disabled={closing} className="btn-ghost">
-            {closing ? 'Ending…' : 'End voting now'}
-          </button>
-        </div>
-      )}
 
-      <div className="mt-6">
-        <PrivacyNote />
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-[#2e335b] font-heading leading-tight">
+            {election.name}
+          </h1>
+
+          <p className="mt-3 text-sm sm:text-base text-[#2e335b]/80 max-w-3xl leading-relaxed">
+            {election.description}
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center gap-6 pt-5 border-t border-[#cdd0e5]/60 text-xs text-[#2e335b]/75">
+            <span>
+              <strong>Organizer:</strong> <code className="font-mono">{election.organizer ? election.organizer.slice(0, 10) + '…' : 'Public'}</code>
+            </span>
+            <span>
+              <strong>Created:</strong> {formatDate(election.createdAt)}
+            </span>
+            <span>
+              <strong>Ends:</strong> {formatDate(election.endTime)}
+            </span>
+            <span className="font-bold text-[#2e335b]">
+              {election.totalVotes} ballot{election.totalVotes === 1 ? '' : 's'} recorded
+            </span>
+          </div>
+        </div>
+
+        {/* Voting Terminal & Privacy Panels */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Candidates Column */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-lg font-bold text-[#2e335b] font-heading">
+                Cast Your Confidential Ballot
+              </h2>
+              <span className="text-xs text-[#2e335b]/60">Choose one candidate</span>
+            </div>
+
+            {isClosed ? (
+              <div className="credix-card p-8 text-center bg-white border border-[#cdd0e5]">
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 mx-auto mb-2">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-[#2e335b] font-heading mt-2">Voting Has Ended</h3>
+                <p className="text-xs sm:text-sm text-[#2e335b]/75 mt-1">
+                  Ballots for this election are closed and official tallies have been decrypted.
+                </p>
+                <Link to={`/election/${id}/results`} className="button accent sm mt-5 text-xs font-bold inline-flex items-center gap-1.5">
+                  <Trophy className="w-3.5 h-3.5" />
+                  <span>View Final Results</span>
+                </Link>
+              </div>
+            ) : voted ? (
+              <div className="credix-card p-8 text-center bg-emerald-50/70 border border-emerald-300">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-700 mx-auto mb-2">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-emerald-900 font-heading mt-2">Your Ballot Has Been Cast</h3>
+                <p className="text-xs sm:text-sm text-emerald-800 mt-1">
+                  Your nullifier hash was verified and permanently counted. Your candidate choice remains mathematically hidden.
+                </p>
+                <Link to={`/election/${id}/results`} className="button ghost sm mt-5 text-xs font-bold inline-flex items-center gap-1.5">
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  <span>Track Election Status</span>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {election.candidates.map((c) => (
+                    <CandidateCard
+                      key={c.index}
+                      candidate={c}
+                      selected={selected === c.index}
+                      onSelect={(idx) => setSelected(idx)}
+                    />
+                  ))}
+                </div>
+
+                <div className="pt-4">
+                  {!connected ? (
+                    <div className="credix-card p-6 bg-white border border-[#cdd0e5] space-y-3">
+                      <p className="text-xs text-[#2e335b]/80">Connect your Lace wallet to cast your private vote:</p>
+                      <ConnectWallet />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setModalOpen(true)}
+                      disabled={selected === null}
+                      className="button accent text-sm w-full !py-3.5 inline-flex items-center justify-center gap-2 font-bold"
+                    >
+                      <Lock className="w-4 h-4" />
+                      <span>{selected === null ? 'Select an Option Above' : 'Proceed to Secret Vote'}</span>
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Sidebar Column: Privacy Details & Organizer Actions */}
+          <div className="lg:col-span-5 space-y-6">
+            <PrivacyNote />
+
+            {/* Organizer End Voting Controls */}
+            {connected && !isClosed && (
+              <div className="credix-card p-6 bg-white border border-[#cdd0e5] shadow-sm">
+                <span className="tag !text-[10px] mb-2">Organizer Tools</span>
+                <h4 className="text-sm font-bold text-[#2e335b] font-heading mt-1">
+                  Election Administration
+                </h4>
+                <p className="text-xs text-[#2e335b]/70 mt-1 leading-relaxed">
+                  If you are the designated election organizer, you can end voting early to publish final tallies.
+                </p>
+                <button
+                  onClick={handleClose}
+                  disabled={closing}
+                  className="button ghost sm mt-4 text-xs w-full hover:border-rose-300 hover:text-rose-700"
+                >
+                  {closing ? 'Ending Voting…' : 'End Voting & Decrypt Results'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <VoteModal
@@ -222,7 +291,6 @@ export default function ElectionDetails() {
         onConfirm={confirmVote}
         onClose={closeVoteModal}
       />
-    </div>
     </PageShell>
   );
 }

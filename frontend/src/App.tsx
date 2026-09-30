@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Landing from './pages/Landing';
+import Features from './pages/Features';
 import Dashboard from './pages/Dashboard';
 import CreateElection from './pages/CreateElection';
 import ElectionDetails from './pages/ElectionDetails';
@@ -16,6 +17,7 @@ export default function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/features" element={<Features />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create" element={<CreateElection />} />
           <Route path="/results" element={<ResultsOverview />} />

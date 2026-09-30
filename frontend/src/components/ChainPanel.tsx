@@ -112,29 +112,32 @@ export default function ChainPanel() {
 
   // --- not yet on a contract -----------------------------------------------
   return (
-    <div className="glass mb-6 p-4 text-sm">
+    <div className="credix-card mb-6 p-5 bg-white border border-[#cdd0e5] shadow-sm text-sm text-[#2e335b]">
       {busy ? (
         <>
           <div className="flex items-center gap-3">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-transparent" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#2e335b] border-t-transparent" />
             <div>
-              <p className="font-semibold text-slate-200">{step ?? 'Working…'}</p>
-              <p className="text-xs text-slate-500">{busySubtitle(step)}</p>
+              <p className="font-bold text-[#2e335b]">{step ?? 'Working…'}</p>
+              <p className="text-xs text-[#2e335b]/70">{busySubtitle(step)}</p>
             </div>
           </div>
           <ActivityLog />
         </>
       ) : (
         <>
-          <p className="font-semibold text-amber-200">⛓ Not connected to a contract yet</p>
+          <p className="font-bold text-amber-800 flex items-center gap-2">
+            <span>⛓</span>
+            <span>Not connected to a contract yet</span>
+          </p>
           {networkMatches ? (
-            <p className="mt-1 text-slate-400">
+            <p className="mt-1 text-xs text-[#2e335b]/75">
               Join the deployed ShadowVote contract on{' '}
               <strong>{NETWORK_LABEL_OVERRIDE ?? networkId ?? 'this network'}</strong>
               , or deploy your own. Deploying submits a real transaction and costs a fee.
             </p>
           ) : (
-            <p className="mt-1 text-amber-300/90">
+            <p className="mt-1 text-xs text-amber-900">
               Your wallet is on <strong>{NETWORK_LABEL_OVERRIDE ?? networkId}</strong>, where this
               build has no deployed contract. Switch your wallet's Midnight network, or deploy your
               own here.
@@ -143,17 +146,17 @@ export default function ChainPanel() {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {saved ? (
-              <button onClick={() => open({ contractAddress: saved })} className="btn-primary">
+              <button onClick={() => open({ contractAddress: saved })} className="button accent sm text-xs">
                 Rejoin {shortAddress(saved, 10, 6)}
               </button>
             ) : (
               shipped && (
-                <button onClick={() => open({ contractAddress: shipped })} className="btn-primary">
+                <button onClick={() => open({ contractAddress: shipped })} className="button accent sm text-xs">
                   Join {shortAddress(shipped, 10, 6)}
                 </button>
               )
             )}
-            <button onClick={() => open({ forceDeploy: true })} className="btn-ghost">
+            <button onClick={() => open({ forceDeploy: true })} className="button ghost sm text-xs">
               Deploy a new contract
             </button>
           </div>
@@ -166,12 +169,12 @@ export default function ChainPanel() {
             className="mt-3 flex gap-2"
           >
             <input
-              className="input py-1.5 text-xs"
+              className="input !py-1.5 !px-3 text-xs"
               placeholder="or paste an existing contract address…"
               value={joinAddress}
               onChange={(e) => setJoinAddress(e.target.value)}
             />
-            <button type="submit" disabled={!joinAddress.trim()} className="btn-ghost px-3 text-xs">
+            <button type="submit" disabled={!joinAddress.trim()} className="button sm text-xs">
               Join
             </button>
           </form>
@@ -180,7 +183,7 @@ export default function ChainPanel() {
 
       {error && (
         <>
-          <p className="mt-3 whitespace-pre-line break-words border-t border-white/5 pt-3 text-xs text-rose-300">
+          <p className="mt-3 whitespace-pre-line break-words border-t border-rose-200 pt-3 text-xs text-rose-700">
             {error}
           </p>
           <ActivityLog />

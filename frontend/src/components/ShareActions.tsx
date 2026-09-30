@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link2, Check } from 'lucide-react';
 
 /**
  * Copy-link button.
@@ -13,11 +14,11 @@ import { useState } from 'react';
  * fallback selects the text so it can still be copied manually.
  */
 export default function CopyLinkButton({
-  url,
+  url = typeof window !== 'undefined' ? window.location.href : '',
   label = 'Copy link',
-  className = 'btn-ghost',
+  className = 'button ghost sm text-xs',
 }: {
-  url: string;
+  url?: string;
   label?: string;
   className?: string;
 }) {
@@ -39,8 +40,18 @@ export default function CopyLinkButton({
 
   return (
     <div className="inline-flex flex-col items-start gap-1">
-      <button type="button" onClick={copy} className={className} title={url}>
-        {copied ? '✓ Copied' : `🔗 ${label}`}
+      <button type="button" onClick={copy} className={`${className} flex items-center gap-1.5`} title={url}>
+        {copied ? (
+          <>
+            <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>Copied</span>
+          </>
+        ) : (
+          <>
+            <Link2 className="w-3.5 h-3.5 shrink-0" />
+            <span>{label}</span>
+          </>
+        )}
       </button>
       {failed && (
         <input

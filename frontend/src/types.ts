@@ -14,12 +14,12 @@ export interface Candidate {
 export type ElectionCategory = 'election' | 'survey' | 'poll' | 'referendum' | 'governance' | 'other';
 
 export const ELECTION_CATEGORIES: { value: ElectionCategory; label: string; icon: string }[] = [
-  { value: 'election', label: 'Election', icon: '🗳️' },
-  { value: 'survey', label: 'Survey', icon: '📋' },
-  { value: 'poll', label: 'Poll', icon: '📊' },
-  { value: 'referendum', label: 'Referendum', icon: '⚖️' },
-  { value: 'governance', label: 'Governance', icon: '🏛️' },
-  { value: 'other', label: 'Other', icon: '✨' },
+  { value: 'election', label: 'Election', icon: 'Vote' },
+  { value: 'survey', label: 'Survey', icon: 'ClipboardList' },
+  { value: 'poll', label: 'Poll', icon: 'BarChart3' },
+  { value: 'referendum', label: 'Referendum', icon: 'Scale' },
+  { value: 'governance', label: 'Governance', icon: 'Building2' },
+  { value: 'other', label: 'Other', icon: 'Sparkles' },
 ];
 
 export function categoryMeta(c: ElectionCategory | undefined) {

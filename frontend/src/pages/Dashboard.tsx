@@ -7,15 +7,21 @@ import ElectionCard from '../components/ElectionCard';
 import Spinner from '../components/Spinner';
 import { useWallet, WALLET_INSTALL_URL } from '../hooks/useWallet';
 import ChainPanel from '../components/ChainPanel';
-import { PageShell, PageHeader, Reveal } from '../components/Motion';
+import { PageShell, PageHeader } from '../components/Motion';
+import CategoryIcon from '../components/CategoryIcon';
+import {
+  Vote,
+  ClipboardList,
+  Activity,
+  ShieldCheck,
+  KeyRound,
+  Search,
+  CheckCircle2,
+  Layers,
+  Plus,
+} from 'lucide-react';
 
 type Filter = 'active' | 'ended' | 'all';
-
-const FILTERS: { value: Filter; label: string }[] = [
-  { value: 'active', label: 'Active' },
-  { value: 'ended', label: 'Ended' },
-  { value: 'all', label: 'All' },
-];
 
 export default function Dashboard() {
   const { connected, connecting, connect, error } = useWallet();
@@ -43,25 +49,12 @@ export default function Dashboard() {
     [elections],
   );
 
-  /** Only offer category chips that actually match something. */
   const presentCategories = useMemo(() => {
     const seen = new Set<ElectionCategory>();
     elections.forEach((e) => seen.add(e.category));
     return [...seen];
   }, [elections]);
 
-  /**
-   * Text search over name and description.
-   *
-   *   "There is no search bar or filter by status on the home page. When
-   *    scrolling through many elections, finding my college poll was
-   *    difficult."  -- Amitav Sen, 4 stars
-   *
-   * Status and type filters already existed; what was missing was finding a
-   * specific election by name once the list grew past a screenful. Searching
-   * runs over already-loaded public metadata — it costs nothing and reaches
-   * the chain not at all.
-   */
   const shown = useMemo(() => {
     const byStatus = filter === 'active' ? active : filter === 'ended' ? ended : elections;
     const byCategory = category === 'all' ? byStatus : byStatus.filter((e) => e.category === category);
@@ -77,80 +70,106 @@ export default function Dashboard() {
   }, [filter, category, query, active, ended, elections]);
 
   const stats = [
-    { label: 'Elections', value: elections.length, accent: 'text-slate-100' },
-    { label: 'Open now', value: active.length, accent: 'text-emerald-300' },
-    { label: 'Votes cast', value: totalVotes, accent: 'text-zinc-300' },
+    { label: 'Total Elections', value: elections.length, badge: 'All-Time', icon: ClipboardList, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+    { label: 'Open Now', value: active.length, badge: 'Live Voting', icon: Activity, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+    { label: 'Ballots Cast', value: totalVotes, badge: 'ZK Shielded', icon: ShieldCheck, color: 'text-[#202952] bg-[#dfe7f9] border-[#cdd0e5]' },
   ];
 
   return (
     <PageShell>
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <PageHeader
-        eyebrow="Private ballots · Public tally"
-        title="Elections"
-        subtitle="Anyone can start a vote and anyone can take part — ballots stay private, results stay public."
-        actions={
-          <Link to="/create" className="btn-primary shrink-0">
-            + Create
-          </Link>
-        }
-      />
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <PageHeader
+          eyebrow="Midnight Preview · Zero-Knowledge Governance"
+          title="Elections Hub"
+          subtitle="Explore live community elections or deploy your own private ballot — voting choices stay confidential, tallies stay verifiable."
+          actions={
+            <Link to="/create" className="button accent text-xs !py-3 !px-6 shrink-0 inline-flex items-center gap-1.5 font-bold">
+              <Plus className="w-4 h-4" />
+              <span>Create Election</span>
+            </Link>
+          }
+        />
 
-      {/* Stats */}
-      <div className="mt-7 grid grid-cols-3 gap-3">
-        {stats.map((s, i) => (
-          <Reveal key={s.label} index={i + 3} className="glass p-4 text-center sm:p-5">
-            <p className={`text-2xl font-extrabold tabular-nums sm:text-3xl ${s.accent}`}>
-              {loading ? '—' : s.value}
-            </p>
-            <p className="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">
-              {s.label}
-            </p>
-          </Reveal>
-        ))}
-      </div>
-
-      <ChainPanel />
-
-      {!connected && (
-        <div className="glass mt-6 p-4 text-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-amber-200">
-              🔑 Connect your wallet to create elections and cast votes.
-            </span>
-            <button onClick={() => connect()} disabled={connecting} className="btn-ghost">
-              {connecting ? 'Waiting for wallet…' : 'Connect Wallet'}
-            </button>
-          </div>
-
-          {error && (
-            <p className="mt-3 border-t border-white/5 pt-3 text-rose-300">
-              {error.message}{' '}
-              {error.code === 'NOT_INSTALLED' && (
-                <a
-                  href={WALLET_INSTALL_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="font-semibold underline hover:text-rose-200"
-                >
-                  Wallet setup guide ↗
-                </a>
-              )}
-            </p>
-          )}
+        {/* Stats Strip */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {stats.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="credix-card p-6 bg-white border border-[#cdd0e5] shadow-credix"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${s.color}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="tag !text-[10px] !py-0.5 !px-2.5">
+                    {s.badge}
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-extrabold text-[#2e335b] font-heading">
+                  {loading ? '—' : s.value}
+                </p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[#2e335b]/70">
+                  {s.label}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
-      )}
 
-      {/* Search — only worth the space once there is enough to get lost in. */}
-      {elections.length > 3 && (
-        <div className="relative mt-7">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" aria-hidden>
-            🔍
+        <div className="mt-6">
+          <ChainPanel />
+        </div>
+
+        {!connected && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="credix-card mt-6 p-6 border border-amber-300 bg-amber-50/70 text-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3 text-amber-900 font-semibold text-xs sm:text-sm">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+                  <KeyRound className="w-4 h-4 text-amber-800" />
+                </div>
+                <span>Connect your Lace Midnight wallet to deploy elections or cast confidential votes.</span>
+              </div>
+              <button onClick={() => connect()} disabled={connecting} className="button accent sm text-xs font-bold">
+                {connecting ? 'Waiting for Lace…' : 'Connect Wallet'}
+              </button>
+            </div>
+
+            {error && (
+              <p className="mt-3 border-t border-amber-200 pt-3 text-xs text-rose-700">
+                {error.message}{' '}
+                {error.code === 'NOT_INSTALLED' && (
+                  <a
+                    href={WALLET_INSTALL_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="font-bold underline text-[#2e335b]"
+                  >
+                    Install Lace Wallet ↗
+                  </a>
+                )}
+              </p>
+            )}
+          </motion.div>
+        )}
+
+        {/* Search Bar */}
+        <div className="relative mt-8">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#2e335b]/50" aria-hidden>
+            <Search className="w-4 h-4" />
           </span>
           <input
             type="search"
-            className="input pl-9"
-            placeholder="Search elections by name, description or candidate…"
+            className="input pl-11 pr-24 py-3 bg-white border-[#cdd0e5] shadow-credix"
+            placeholder="Search elections by name, description, or candidate…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Search elections"
@@ -158,109 +177,127 @@ export default function Dashboard() {
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-300"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold px-3 py-1.5 rounded-full bg-[#dfe7f9] text-[#2e335b] hover:bg-[#cdd0e5]"
             >
-              clear
+              Clear
             </button>
           )}
         </div>
-      )}
 
-      {/* Filters */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <div className="inline-flex rounded-xl border border-white/10 bg-white/[0.02] p-1">
-          {FILTERS.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
-              className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                filter === f.value
-                  ? 'bg-white/10 text-white'
-                  : 'text-slate-400 hover:text-slate-100'
-              }`}
-            >
-              {f.label} (
-              {f.value === 'active'
-                ? active.length
-                : f.value === 'ended'
-                  ? ended.length
-                  : elections.length}
-              )
-            </button>
-          ))}
-        </div>
-
-        {/* Category chips appear only once there is something to filter. */}
-        {presentCategories.length > 1 && (
-          <div className="flex flex-wrap gap-1.5">
-            {(['all', ...presentCategories] as const).map((c) => {
-              const on = category === c;
-              const meta = c === 'all' ? null : categoryMeta(c);
+        {/* Status Tabs & Category Chips */}
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-[#cdd0e5]/70 pb-4">
+          <div className="inline-flex rounded-full border border-[#cdd0e5] bg-[#dfe7f9]/70 p-1">
+            {[
+              { value: 'active', label: 'Active Ballots', icon: Activity },
+              { value: 'ended', label: 'Ended', icon: CheckCircle2 },
+              { value: 'all', label: 'All Votes', icon: Layers },
+            ].map((f) => {
+              const Icon = f.icon;
               return (
                 <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                    on
-                      ? 'border-white/40 bg-white/10 text-slate-100'
-                      : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-slate-200'
+                  key={f.value}
+                  onClick={() => setFilter(f.value as Filter)}
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                    filter === f.value
+                      ? 'bg-white text-[#2e335b] shadow-sm'
+                      : 'text-[#2e335b]/70 hover:text-[#2e335b]'
                   }`}
                 >
-                  {meta ? `${meta.icon} ${meta.label}` : 'All types'}
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{f.label}</span>
+                  <span className="ml-1 opacity-75 font-mono">
+                    (
+                    {f.value === 'active'
+                      ? active.length
+                      : f.value === 'ended'
+                        ? ended.length
+                        : elections.length}
+                    )
+                  </span>
                 </button>
               );
             })}
           </div>
-        )}
-      </div>
 
-      {/* List */}
-      <div className="mt-6">
-        {loading ? (
-          <Spinner label="Loading elections…" />
-        ) : shown.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="glass grid place-items-center px-6 py-20 text-center"
-          >
-            <p className="text-4xl">{query ? '🔍' : '🗳️'}</p>
-            <p className="mt-3 font-semibold text-slate-200">
-              {query
-                ? `Nothing matches “${query.trim()}”`
-                : category === 'all'
-                ? `No ${filter === 'all' ? '' : filter} elections`
-                : `No ${categoryMeta(category).label.toLowerCase()}s here`}
-            </p>
-            <p className="mt-1 max-w-sm text-sm text-slate-400">
-              {query
-                ? 'Try a different word, or clear the search.'
-                : category !== 'all'
-                ? 'Try another type, or clear the filter.'
-                : filter === 'ended'
-                  ? 'Elections appear here once their voting window closes.'
-                  : 'Create the first one to get started.'}
-            </p>
-            {query && (
-              <button onClick={() => setQuery('')} className="btn-ghost mt-5">
-                Clear search
-              </button>
-            )}
-            {!query && category === 'all' && filter !== 'ended' && (
-              <Link to="/create" className="btn-primary mt-5">
-                Create an election
-              </Link>
-            )}
-          </motion.div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {shown.map((e) => (
-              <ElectionCard key={e.id} election={e} onEnd={refresh} />
-            ))}
-          </div>
-        )}
+          {presentCategories.length > 1 && (
+            <div className="flex flex-wrap gap-1.5">
+              {(['all', ...presentCategories] as const).map((c) => {
+                const on = category === c;
+                const meta = c === 'all' ? null : categoryMeta(c);
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setCategory(c)}
+                    className={`rounded-full border px-3.5 py-1 text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                      on
+                        ? 'border-[#2e335b] bg-[#2e335b] text-white shadow-sm'
+                        : 'border-[#cdd0e5] bg-white text-[#2e335b]/75 hover:bg-[#dfe7f9]'
+                    }`}
+                  >
+                    {meta ? (
+                      <>
+                        <CategoryIcon category={c} className="w-3 h-3" />
+                        <span>{meta.label}</span>
+                      </>
+                    ) : (
+                      'All Categories'
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Elections Grid */}
+        <div className="mt-8">
+          {loading ? (
+            <div className="py-20 flex justify-center">
+              <Spinner label="Syncing elections with Midnight Preview indexer…" />
+            </div>
+          ) : shown.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="credix-card grid place-items-center px-6 py-20 text-center bg-white border border-[#cdd0e5]"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-[#dfe7f9] border border-[#cdd0e5] flex items-center justify-center text-[#202952] mb-3">
+                {query ? <Search className="w-7 h-7 text-[#202952]/70" /> : <Vote className="w-7 h-7 text-[#202952]/70" />}
+              </div>
+              <p className="mt-2 text-xl font-bold text-[#2e335b] font-heading">
+                {query
+                  ? `No elections found matching “${query.trim()}”`
+                  : category === 'all'
+                  ? `No ${filter === 'all' ? '' : filter} elections currently listed`
+                  : `No ${categoryMeta(category).label.toLowerCase()} polls available`}
+              </p>
+              <p className="mt-2 max-w-md text-xs sm:text-sm text-[#2e335b]/75 leading-relaxed">
+                {query
+                  ? 'Try checking for spelling errors or clearing your query.'
+                  : filter === 'ended'
+                    ? 'Elections appear here automatically once their voting deadline passes and tallies are published.'
+                    : 'Be the first to deploy a private election on Midnight Preview.'}
+              </p>
+              {query ? (
+                <button onClick={() => setQuery('')} className="button ghost sm mt-5 text-xs font-bold">
+                  Clear Search
+                </button>
+              ) : (
+                <Link to="/create" className="button accent sm mt-6 text-xs font-bold inline-flex items-center gap-1.5">
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Create First Election</span>
+                </Link>
+              )}
+            </motion.div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {shown.map((e) => (
+                <ElectionCard key={e.id} election={e} onEnd={refresh} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </PageShell>
   );
 }
